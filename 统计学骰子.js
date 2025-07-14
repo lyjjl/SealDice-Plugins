@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        统计学骰子
 // @author       某人
-// @version      1.0.2
+// @version      1.1.0
 // @description  纯娱乐的统计学骰子，笨蛋某人不要忘了指令是 .dtbt | .dtbt help查看帮助
 // @timestamp    1752512052
 // @license      MIT
@@ -11,15 +11,76 @@
 // 写了图一乐呵，大佬轻喷，我是菜鸡哇
 
 /**
- * 生成器类
+ * 生成器类 - 使用自定义 Xoroshiro128+ PRNG
  */
 class DistributionGenerator {
 
     /**
-     * 用于 Box-Muller 变换的缓存变量，以生成正态值
+     * Xoroshiro128+ PRNG
+     * @type {Array<number>}
+     */
+    static #s0; // 初始种子值1
+    static #s1; // 初始种子值2
+
+    /**
+     * Box-Muller 变换的缓存变量
      * @type {number|null}
      */
     static #nextNormal = null;
+
+    // 静态初始化块：在类首次加载时执行一次，用于自动播种
+    static {
+        const timestamp = Date.now();
+        // 派生两个种子
+        const seed0 = timestamp;
+        const seed1 = (timestamp ^ 0x9E3779B9) + (timestamp >>> 17); 
+        // 别问我为什么是 0x9E3779B （）
+        
+        // 调用 setSeed 方法来设置初始状态
+        DistributionGenerator.setSeed(seed0 || 1, seed1 || 1); // 确保种子非零
+    }
+
+    /**
+     * Xoroshiro128+ PRNG 的核心函数。
+     * 生成一个介于 0（包含）和 1（不包含）之间的伪随机浮点数。
+     * @returns {number} 0 <= x < 1
+     */
+    static #customRandom() {
+        // 实现 Xoroshiro128+ 算法
+        // 好吧，这里我不会，抄作业快乐
+        
+        let s0 = DistributionGenerator.#s0;
+        let s1 = DistributionGenerator.#s1;
+
+        const result = s0 + s1; // 简单的加法
+
+        s1 ^= s0; // s1 = s1 XOR s0;
+
+        // 位移操作 (left/right shifts)
+        // rotl(x, k) = (x << k) | (x >>> (32 - k)) for 32-bit
+        s0 = ((s0 << 27) | (s0 >>> 5)) ^ s1 ^ ((s1 << 17) | (s1 >>> 15));
+        s1 = ((s1 << 13) | (s1 >>> 19));
+        
+        // 确保状态值在可接受的范围内，避免精度问题
+        DistributionGenerator.#s0 = s0;
+        DistributionGenerator.#s1 = s1;
+
+        // 将结果转换为 [0, 1) 的浮点数
+        // `>>> 0` 确保结果是无符号32位整数，然后除以 2^32 来得到 [0, 1) 的浮点数。
+        return (result >>> 0) / (0xFFFFFFFF + 1);
+    }
+
+    /**
+     * 设置 Xoroshiro128+ PRNG 的种子。
+     * @param {number} seed0 - 第一个种子值。
+     * @param {number} seed1 - 第二个种子值。
+     */
+    static setSeed(seed0, seed1) {
+        // 确保种子非零，否则PRNG会卡在零状态
+        DistributionGenerator.#s0 = seed0 || 1; 
+        DistributionGenerator.#s1 = seed1 || 1;
+        DistributionGenerator.#nextNormal = null; // 清除Box-Muller缓存
+    }
 
     /**
      * 生成正态分布（Normal Distribution）随机数。
@@ -39,8 +100,9 @@ class DistributionGenerator {
         // 使用 Box-Muller 算法生成一对正态随机数
         let u, v, s;
         do {
-            u = Math.random() * 2 - 1; 
-            v = Math.random() * 2 - 1;
+            // 使用自定义的随机数源
+            u = this.#customRandom() * 2 - 1; 
+            v = this.#customRandom() * 2 - 1;
             s = u * u + v * v;
         } while (s >= 1 || s === 0);
 
@@ -66,7 +128,7 @@ class DistributionGenerator {
 
         do {
             k++;
-            p *= Math.random(); 
+            p *= this.#customRandom(); // 使用自定义的随机数源
         } while (p > L);
 
         return k - 1;
@@ -141,7 +203,7 @@ const generateDistribution = (type, params) => {
 };
 
 if (!seal.ext.find('统计学骰子')){
-const ext = seal.ext.new('统计学骰子', '某人', '1.0.2');
+const ext = seal.ext.new('统计学骰子', '某人', '1.1.0');
 seal.ext.register(ext);
 
 // seal.vars.intSet(ctx, `$groundCount`, 1);
