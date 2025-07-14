@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        统计学骰子
 // @author       某人
-// @version      1.0.1
+// @version      1.0.2
 // @description  纯娱乐的统计学骰子，笨蛋某人不要忘了指令是 .dtbt | .dtbt help查看帮助
-// @timestamp    0
+// @timestamp    1752512052
 // @license      MIT
-// @homepageURL   http://example.com/
+// @homepageURL   https://github.com/lyjjl
 // ==/UserScript==
 
 // 写了图一乐呵，大佬轻喷，我是菜鸡哇
@@ -141,7 +141,7 @@ const generateDistribution = (type, params) => {
 };
 
 if (!seal.ext.find('统计学骰子')){
-const ext = seal.ext.new('统计学骰子', '某人', '1.0.1');
+const ext = seal.ext.new('统计学骰子', '某人', '1.0.2');
 seal.ext.register(ext);
 
 // seal.vars.intSet(ctx, `$groundCount`, 1);
@@ -219,12 +219,14 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
             }
             // seal.vars.intSet(ctx, `$groundCount`, cmdArgs.getArgN(2));
             // let roundCount = seal.vars.intGet(ctx, `$groundCount`)[0];
-            // 防止嵌套问题
+            // ✗防止嵌套问题
+            // ✓我也不知道这是啥了
             // console.log('当前 roundCount = ', roundCount);
             roundCount = cmdArgs.getArgN(2);
             seal.replyToSender(ctx, msg, `已经设置为生成 ${roundCount} 轮`);
             isHelp = 1;
             // 避免无意义输出哈
+            // 懒得改了，打补丁万岁（）
             break;
 
         case 'help':
@@ -244,7 +246,7 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
     // 置空 result
     
     // console.log('当前 seal方法roundCount = ', seal.vars.intGet(ctx, `$groundCount`)[0]);
-    
+    // 我也不知道我在干什么了，就这样吧
     if (isHelp == 0){
         // let roundCount = seal.vars.intGet(ctx, `$groundCount`)[0];
         // console.log('当前 roundCount = ', roundCount);
