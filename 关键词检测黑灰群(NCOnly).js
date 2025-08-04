@@ -1,4 +1,4 @@
-    // ==UserScript==
+// ==UserScript==
 // @name        关键词检测黑灰产群(NCOnly)
 // @author       是非分明 x 某人
 // @version      1.0.0
@@ -386,7 +386,7 @@ if (!ext) {
                 }]
             });
         };
-        } catch (error) {
+        } catch (error)
         console.log("步过私聊发送消息")
         try {
         for (let i = 0; i < C_QQ_Group_length; i++) {
@@ -401,7 +401,6 @@ if (!ext) {
             });
         }
         } catch (error)
-        }
         console.log("步过群聊发送消息")
     }
 
@@ -840,5 +839,6 @@ async function sendForwardedHistory(historyResponse, targetGroupId) {
     	// 某：已经被取代，很可能删除这段代码
     }
     */
+
 
 }
