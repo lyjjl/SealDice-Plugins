@@ -80,6 +80,7 @@ if (!seal.ext.find('forwardMsgByTime')) {
     }
 
 
+
     /**
      * 异步等待随机时间（不阻塞线程）
      * @param {number} min - 最小延迟（毫秒）
