@@ -2,7 +2,7 @@
 // @name        统计学骰子
 // @author       某人
 // @version      1.1.0
-// @description  纯娱乐的统计学骰子，笨蛋某人不要忘了指令是 .dtbt | .dtbt help查看帮助
+// @description  纯娱乐的统计学骰子，笨蛋某人不要忘了指令是 .dtbt | .dtbt help 查看帮助
 // @timestamp    1752512052
 // @license      MIT
 // @homepageURL   https://github.com/lyjjl
@@ -19,8 +19,8 @@ class DistributionGenerator {
      * Xoroshiro128+ PRNG
      * @type {Array<number>}
      */
-    static #s0; // 初始种子值1
-    static #s1; // 初始种子值2
+    static #s0; // 初始种子值 1
+    static #s1; // 初始种子值 2
 
     /**
      * Box-Muller 变换的缓存变量
@@ -34,7 +34,7 @@ class DistributionGenerator {
         // 派生两个种子
         const seed0 = timestamp;
         const seed1 = (timestamp ^ 0x9E3779B9) + (timestamp >>> 17); 
-        // 别问我为什么是 0x9E3779B （）
+        // 别问我为什么是 0x9E3779B（）我也不明白原理
         
         // 调用 setSeed 方法来设置初始状态
         DistributionGenerator.setSeed(seed0 || 1, seed1 || 1); // 确保种子非零
@@ -66,7 +66,7 @@ class DistributionGenerator {
         DistributionGenerator.#s1 = s1;
 
         // 将结果转换为 [0, 1) 的浮点数
-        // `>>> 0` 确保结果是无符号32位整数，然后除以 2^32 来得到 [0, 1) 的浮点数。
+        // `>>> 0` 确保结果是无符号 32 位整数，然后除以 2^32 来得到 [0, 1) 的浮点数。
         return (result >>> 0) / (0xFFFFFFFF + 1);
     }
 
@@ -76,10 +76,10 @@ class DistributionGenerator {
      * @param {number} seed1 - 第二个种子值。
      */
     static setSeed(seed0, seed1) {
-        // 确保种子非零，否则PRNG会卡在零状态
+        // 确保种子非零，否则 PRNG 会卡在零状态
         DistributionGenerator.#s0 = seed0 || 1; 
         DistributionGenerator.#s1 = seed1 || 1;
-        DistributionGenerator.#nextNormal = null; // 清除Box-Muller缓存
+        DistributionGenerator.#nextNormal = null; // 清除 Box-Muller 缓存
     }
 
     /**
@@ -178,13 +178,13 @@ const generateDistribution = (type, params) => {
             if (typeof params.mean === 'number' && typeof params.stdDev === 'number') {
                 return DistributionGenerator.randNormal(params.mean, params.stdDev);
             }
-            throw new Error("正态分布需要 mean 和 stdDev 参数.");
+            throw new Error("正态分布需要 mean 和 stdDev 参数。");
 
         case 'poisson':
             if (typeof params.lambda === 'number') {
                 return DistributionGenerator.randPoisson(params.lambda);
             }
-            throw new Error("泊松分布需要 lambda 参数.");
+            throw new Error("泊松分布需要 lambda 参数。");
 
         case 't':
         case 'chi_squared':
@@ -197,7 +197,7 @@ const generateDistribution = (type, params) => {
             throw new Error(`${type} 分布需要 df (自由度) 参数.`);
 
         default:
-            console.error(`不支持的类型: ${type}`);
+            console.error(`不支持的类型：${type}`);
             return null;
     }
 };
@@ -213,7 +213,7 @@ let roundCount = 1;
 
 let cmdDistributionDice = seal.ext.newCmdItemInfo();
 cmdDistributionDice.name = '统计学骰子'; // 命令名称
-cmdDistributionDice.help = '>>生成正态分布、泊松分布、卡方分布和 t 分布的随机数\n→正态分布由均值 (μ) 和标准差 (σ) 决定\nUSE: dtbt normal <均值> <标准差>\n→泊松分布由速率参数 (λ) 决定，表示在给定时间段内的平均事件发生次数\nUSE: dtbt poisson <速率>\nt 分布由自由度 (df) 决定\nUSE: dtbt t <自由度>\n→卡方分布同样由自由度 (df) 决定\nUSE: dtbt chi_squared <自由度>\n>>使用 dtbt cset [轮数]即可配置批量生成,如果没有填写轮数将会恢复到生成1次(最多30轮 所有群同步 重载恢复)';
+cmdDistributionDice.help = '>>生成正态分布、泊松分布、卡方分布和 t 分布的随机数\n→正态分布由均值 (μ) 和标准差 (σ) 决定\nUSE: dtbt normal <均值> <标准差>\n→泊松分布由速率参数 (λ) 决定，表示在给定时间段内的平均事件发生次数\nUSE: dtbt poisson <速率>\nt 分布由自由度 (df) 决定\nUSE: dtbt t <自由度>\n→卡方分布同样由自由度 (df) 决定\nUSE: dtbt chi_squared <自由度>\n>>使用 dtbt cset [轮数] 即可配置批量生成，如果没有填写轮数将会恢复到生成 1 次 (最多 30 轮 所有群同步 重载恢复)';
 
 let isHelp = 0;
 
@@ -236,7 +236,7 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
 
     switch (distributionType) {
         case 'normal':
-            // 指令格式: dtbt normal <mean> <stdDev>
+            // 指令格式：dtbt normal <mean> <stdDev>
             params.mean = parseFloat(cmdArgs.getArgN(2));
             params.stdDev = parseFloat(cmdArgs.getArgN(3));
             if (isNaN(params.mean) || isNaN(params.stdDev)) {
@@ -246,7 +246,7 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
             break;
 
         case 'poisson':
-            // 指令格式: dtbt poisson <lambda>
+            // 指令格式：dtbt poisson <lambda>
             params.lambda = parseFloat(cmdArgs.getArgN(2));
             if (isNaN(params.lambda)) {
                 throw new Error("泊松分布参数无效。需要速率参数 lambda");
@@ -256,7 +256,7 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
 
         case 't':
         case 'chi_squared':
-            // 指令格式: dtbt t <df> 或 dtbt chi_squared <df>
+            // 指令格式：dtbt t <df> 或 dtbt chi_squared <df>
             params.df = parseFloat(cmdArgs.getArgN(2));
             if (isNaN(params.df)) {
                 throw new Error(`${distributionType} 分布参数无效。需要自由度 df`);
@@ -274,8 +274,8 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
             if (!cmdArgs.getArgN(2) || cmdArgs.getArgN(2) > 30){
                 // seal.vars.intSet(ctx, `$groundCount`, 1);
                 roundCount = 1;
-                seal.replyToSender(ctx, msg, `非法参数 ${cmdArgs.getArgN(2)} ,已经设置为默认值1`);
-                console.warn(`非法参数 ${cmdArgs.getArgN(2)} ,已经设置为默认值1`);
+                seal.replyToSender(ctx, msg, `非法参数 ${cmdArgs.getArgN(2)} ,已经设置为默认值 1`);
+                console.warn(`非法参数 ${cmdArgs.getArgN(2)} ,已经设置为默认值 1`);
                 isHelp = 1;
                 break;
             }
@@ -293,21 +293,21 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
 
         case 'help':
             // 帮助命令
-            let help = '>>生成正态分布、泊松分布、卡方分布和 t 分布的随机数\n→正态分布由均值 (μ) 和标准差 (σ) 决定\nUSE: dtbt normal <均值> <标准差>\n→泊松分布由速率参数 (λ) 决定，表示在给定时间段内的平均事件发生次数\nUSE: dtbt poisson <速率>\nt 分布由自由度 (df) 决定\nUSE: dtbt t <自由度>\n→卡方分布同样由自由度 (df) 决定\nUSE: dtbt chi_squared <自由度>\n>>使用 dtbt cset [轮数]即可配置批量生成,如果没有填写轮数将会恢复到生成1次(最多30轮 所有群同步 重载恢复)'
+            let help = '>>生成正态分布、泊松分布、卡方分布和 t 分布的随机数\n→正态分布由均值 (μ) 和标准差 (σ) 决定\nUSE: dtbt normal <均值> <标准差>\n→泊松分布由速率参数 (λ) 决定，表示在给定时间段内的平均事件发生次数\nUSE: dtbt poisson <速率>\nt 分布由自由度 (df) 决定\nUSE: dtbt t <自由度>\n→卡方分布同样由自由度 (df) 决定\nUSE: dtbt chi_squared <自由度>\n>>使用 dtbt cset [轮数] 即可配置批量生成，如果没有填写轮数将会恢复到生成 1 次 (最多 30 轮 所有群同步 重载恢复)'
             seal.replyToSender(ctx, msg, help);
             isHelp = 1;
             break;
 
         default:
             isHelp = 0;
-            throw new Error(`不支持的类型: ${distributionType}`);
+            throw new Error(`不支持的类型：${distributionType}`);
     }
 
     // 调用生成器并输出结果
     result = '' ;
     // 置空 result
     
-    // console.log('当前 seal方法roundCount = ', seal.vars.intGet(ctx, `$groundCount`)[0]);
+    // console.log('当前 seal 方法 roundCount = ', seal.vars.intGet(ctx, `$groundCount`)[0]);
     // 我也不知道我在干什么了，就这样吧
     if (isHelp == 0){
         // let roundCount = seal.vars.intGet(ctx, `$groundCount`)[0];
@@ -318,15 +318,15 @@ cmdDistributionDice.solve = async (ctx, msg, cmdArgs) => { // 标记为 async �
             result = result + generateDistribution(distributionType, params) + `\n`;
         }
         // 笨蛋某人偷偷打个补丁
-        seal.replyToSender(ctx, msg, `成功生成\n类型: ${distributionType}\n值: \n${result}`);
+        seal.replyToSender(ctx, msg, `成功生成\n类型：${distributionType}\n值：\n${result}`);
         
     }
 
 
     } catch (error) {
     // 捕获错误
-    seal.replyToSender(ctx, msg, `指令处理失败: ${error.message}`)
-    console.error(`指令处理失败: ${error.message}`);
+    seal.replyToSender(ctx, msg, `指令处理失败：${error.message}`)
+    console.error(`指令处理失败：${error.message}`);
     }
     
     return seal.ext.newCmdExecuteResult(true); 
