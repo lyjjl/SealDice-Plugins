@@ -13,19 +13,19 @@ if (!ext) {
     seal.ext.register(ext);
 }
 
-// 定义持久化存储的key
+// 定义持久化存储的 key
 const NOTE_COUNT_KEY = 'sent_note_counts';
 const LAST_QUERY_COUNT_KEY = 'last_query_note_counts';
-// 新增：通知群号配置的key
+// 新增：通知群号配置的 key
 const NOTIFICATION_GROUP_IDS_KEY = 'notification_group_ids';
 
-// 注册Template类型的配置项
+// 注册 Template 类型的配置项
 // 默认值为空数组
 seal.ext.registerTemplateConfig(ext, NOTIFICATION_GROUP_IDS_KEY, []);
 
 /**
  * 封装发送消息到指定群的功能
- * @param {object} currentCtx 当前的ctx对象，用于获取endPoint
+ * @param {object} currentCtx 当前的 ctx 对象，用于获取 endPoint
  * @param {string} platform 平台名称，如"QQ"
  * @param {string} groupId 目标群号 (纯数字)
  * @param {string} message 要发送的消息内容
@@ -34,7 +34,7 @@ seal.ext.registerTemplateConfig(ext, NOTIFICATION_GROUP_IDS_KEY, []);
 function sendToGroup(currentCtx, platform, groupId, message) {
     const formattedGroupId = String(groupId).replace(/\D/g, ''); // 确保群号是纯数字
     if (!formattedGroupId) {
-        console.warn("无效的群号，无法发送消息:", groupId);
+        console.warn("无效的群号，无法发送消息：", groupId);
         return false;
     }
 
@@ -71,10 +71,11 @@ cmd_bind_private_group.solve = (ctx, msg, cmdArgs) => {
     }
     if (!gid) {
         if (msg.guildId) {
-            gid = `${msg.guildId}&&${msg.groupId}`;
+            gid = `${msg.groupId}`;
         } else {
             const ret = seal.ext.newCmdExecuteResult(true);
-            ret.showHelp = true;
+            // ret.showHelp = true;
+            // 似乎过度，删
             return ret;
         }
     } else {
@@ -190,12 +191,15 @@ cmd_small_note.help = "。小纸条 对方角色名 署名 内容";
 cmd_small_note.solve = (ctx, msg, cmdArgs) => {
     let toname = cmdArgs.getArgN(1);
     let signname = cmdArgs.getArgN(2);
-    let contentMatch = msg.message.match(new RegExp(`^${ctx.command}(?:\\s+|\\u00A0+)${toname}(?:\\s+|\\u00A0+)${signname}(?:\\s+|\\u00A0+)([\\s\\S]*)$`));
+    // let contentMatch = msg.message.match(new RegExp(`^${ctx.command}(?:\\s+|\\u00A0+)${toname}(?:\\s+|\\u00A0+)${signname}(?:\\s+|\\u00A0+)([\\s\\S]*)$`));
+    let content = cmdArgs.getArgN(3);
+    // let content = "";
 
-    let content = "";
+    /*
     if (contentMatch && contentMatch[1]) {
         content = contentMatch[1].trim();
     }
+    */
 
 
     if (!toname || !signname || !content) {
@@ -247,7 +251,7 @@ cmd_small_note.solve = (ctx, msg, cmdArgs) => {
 
     // 如果配置不为空且包含有效的群号，则发送通知
     if (notificationGroupIds && notificationGroupIds.length > 0) {
-        const notificationMessage = `[小纸条通知]\n发送者: ${sendname}\n接收者: ${toname}\n内容: ${content}`;
+        const notificationMessage = `[小纸条通知]\n发送者：${sendname}\n接收者：${toname}\n内容：${content}`;
         for (const groupId of notificationGroupIds) {
             sendToGroup(ctx, platform, groupId, notificationMessage);
         }
@@ -352,7 +356,7 @@ cmd_gift.solve = (ctx, msg, cmdArgs) => {
 
     // 如果配置不为空且包含有效的群号，则发送通知
     if (notificationGroupIds && notificationGroupIds.length > 0) {
-        const notificationMessage = `[礼物通知]\n发送者: ${sendname}\n接收者: ${toname}\n礼物内容: ${giftContent}\n附言: ${postscript}`;
+        const notificationMessage = `[礼物通知]\n发送者：${sendname}\n接收者：${toname}\n礼物内容：${giftContent}\n附言：${postscript}`;
         for (const groupId of notificationGroupIds) {
             sendToGroup(ctx, platform, groupId, notificationMessage);
         }
