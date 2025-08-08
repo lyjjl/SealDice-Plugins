@@ -1,15 +1,22 @@
 // ==UserScript==
 // @name         小纸条
 // @author       MisakaEx
-// @version      1.1.3
+// @version      1.1.4
 // @description  允许用户绑定一个角色名，并通过角色名向其他用户发送“小纸条”和“礼物”消息。绑定个人群 <角色名> [群号] / 。个人群列表 / 。移除个人群 <个人群名> (限骰主) / 。小纸条 <对方角色名> <署名> <内容> / 。礼物 <对方角色名> <内容> <附言> <署名> / 。我的纸条数。可配置通知群。
 // @timestamp    1753403198
 // @license      MIT
 // ==/UserScript==
 
+/*
+################################
+## 警告 : Development Version ##
+###############################
+*/
+
+
 let ext = seal.ext.find("small_note")
 if (!ext) {
-    ext = seal.ext.new("small_note", "MisakaEx", "1.1.3"); // 更新版本号
+    ext = seal.ext.new("small_note", "MisakaEx", "1.1.4");
     seal.ext.register(ext);
 }
 
