@@ -1,7 +1,24 @@
+// ==UserScript==
+// @name         SheepLib
+// @author       lyjjl
+// @version      1.0.0
+// @description  一个包含了一些便利的功能和私货的 JavaScript 库，主要用于 SealDice 插件开发 (海豹似乎不支持 require())
+// @timestamp    
+// @license      MIT
+// @homepageURL  https://github.com/lyjjl
+// ==/UserScript==
+
+/*
+ * changelog:
+ * - 1.0.0: 初始版本
+*/
+
+// === 下方堆放各种工具函数 ===
+
 /**
- * WGS84 <=> GCJ02 <=> BD09 <=> ECEF 坐标转换库
+ * WGS84 <=> GCJ02 <=> BD09 <=> ECEF 坐标转换
  *
- * 这是一个用于在 WGS84, GCJ02, BD09 和 ECEF 坐标系之间进行相互转换的 JavaScript 工具库。
+ * 这是一个用于在 WGS84, GCJ02, BD09 和 ECEF 坐标系之间进行相互转换的 JavaScript 工具
  *
  * @version 1.1.0
  * @changelog
@@ -337,55 +354,25 @@ const CoordinateConverter = {
     }
 };
 
-// 挂一下
+// === 下方挂载到全局 ===
+
 globalThis.CoordinateConverter = CoordinateConverter;
 
-/*
+// === 下方注册扩展 ===
 
-// 示例用法
-// 北京天安门 WGS84 坐标
-try {
-    const wgs84_point = { latitude: 39.9042, longitude: 116.4074 };
-    console.log("--- 正向转换链：WGS84 -> GCJ02 -> BD09 -> WGS84 ---");
-    const gcj02_point = CoordinateConverter.wgs84ToGcj02(wgs84_point.latitude, wgs84_point.longitude);
-    console.log(`WGS84 -> GCJ02:`, wgs84_point, '->', gcj02_point);
+let ext = seal.ext.find('SheepLib');
+if (!ext) {
+  ext = seal.ext.new('SheepLib', 'lyjjl', '1.0.0');
+  /*
+  const cmdE = seal.ext.newCmdItemInfo();
+  cmdE.name = '';
+  cmdE.help = '';
+  cmdE.solve = (ctx, msg, cmdArgs) => {
+  };
+  ext.cmdMap[''] = cmdE;
 
-    const bd09_point = CoordinateConverter.gcj02ToBd09(gcj02_point.latitude, gcj02_point.longitude);
-    console.log(`GCJ02 -> BD09:`, gcj02_point, '->', bd09_point);
-
-    const gcj02_from_bd09 = CoordinateConverter.bd09ToGcj02(bd09_point.latitude, bd09_point.longitude);
-    console.log(`BD09 -> GCJ02:`, bd09_point, '->', gcj02_from_bd09);
-
-    const wgs84_from_gcj02 = CoordinateConverter.gcj02ToWgs84(gcj02_point.latitude, gcj02_point.longitude);
-    console.log(`GCJ02 -> WGS84 (迭代):`, gcj02_point, '->', wgs84_from_gcj02);
-
-    console.log("\n--- ECEF 转换链：WGS84 -> ECEF -> WGS84 ---");
-    const wgs84_alt_point = { latitude: 39.9042, longitude: 116.4074, altitude: 50 }; // 假设海拔 50 米
-    console.log(`WGS84 原始坐标 (含海拔):`, wgs84_alt_point);
-    const ecef_point = CoordinateConverter.wgs84ToEcef(wgs84_alt_point.latitude, wgs84_alt_point.longitude, wgs84_alt_point.altitude);
-    console.log(`WGS84 -> ECEF:`, ecef_point);
-
-    const wgs84_from_ecef = CoordinateConverter.ecefToWgs84(ecef_point.x, ecef_point.y, ecef_point.z);
-    console.log(`ECEF -> WGS84:`, wgs84_from_ecef);
-
-    console.log("\n--- 异常处理示例：传入无效数据 ---");
-    CoordinateConverter.wgs84ToGcj02("不是数字", 116.4074); // 将抛出错误
-} catch (error) {
-    console.error(`错误：${error.message} (代码：${error.code})`);
+  由于本插件是一个库文件，暂时不计划添加指令
+  */
+  seal.ext.register(ext);
+  // 仅注册插件，表示加载成功
 }
-
-// 示例：注册新坐标系（CGCS2000 占位示例，需实现具体逻辑）
-// 注意：以下 CGCS2000 转换器仅为占位，没有实现具体逻辑，请勿在生产环境中直接使用！
-try {
-    CoordinateConverter.registerConverter('cgcs2000', {
-        to: (lat, lon) => ({ latitude: lat, longitude: lon }), // 示例逻辑
-        from: (lat, lon) => ({ latitude: lat, longitude: lon }) // 示例逻辑
-    });
-    console.log("\n--- 新坐标系转换示例 ---");
-    const cgcs2000_point = CoordinateConverter.cgcs2000.to(39.9042, 116.4074);
-    console.log(`WGS84 -> CGCS2000:`, cgcs2000_point);
-} catch (error) {
-    console.error(`错误：${error.message} (代码：${error.code})`);
-}
-
-*/
