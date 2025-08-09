@@ -6,7 +6,9 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)
 [![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Flyjjl%2FSealDice-Plugins&label=访客数量&countColor=%23263759&style=flat-square)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Flyjjl%2FSealDice-Plugins)
 ---
-# == 我只是初学者,有问题还请大佬指正,切勿轻信鄙人写的屎山 ==
+# 我只是初学者
+# 有问题还请大佬指正
+# 切勿轻信鄙人写的屎山
 
 👇以下是插件列表👇
 
