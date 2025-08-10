@@ -1,25 +1,275 @@
 // ==UserScript==
 // @name         SheepLib
 // @author       lyjjl
-// @version      1.0.0
+// @version      1.1.0
 // @description  一个包含了一些便利的功能和私货的 JavaScript 库，主要用于 SealDice 插件开发 (海豹似乎不支持 require())
 // @timestamp    
 // @license      MIT
 // @homepageURL  https://github.com/lyjjl
 // ==/UserScript==
 
+// #############################################################
+// #####         由于本人懒得写注释，大量注释由 AI 生成          #####
+// ##### 如果出现胡言乱语或者 AI 私自"优化"代码的情况请立即 issue #####
+// #############################################################
+
 /*
  * changelog:
  * - 1.0.0: 初始版本
+ * - 1.1.0: 添加随机数生成器，支持 Xoshiro256++ 和 MT19937 算法
 */
 
 // === 下方堆放各种工具函数 ===
 
+
 /**
- * WGS84 <=> GCJ02 <=> BD09 <=> ECEF 坐标转换
- *
- * 这是一个用于在 WGS84, GCJ02, BD09 和 ECEF 坐标系之间进行相互转换的 JavaScript 工具
- *
+ * @classdesc 高性能随机数生成器，基于 xoshiro256++ 算法
+ */
+class _Xoshiro256PlusPlus {
+    /**
+     * @private
+     * 存储 4 个 64 位整数的状态，使用 BigInt 来处理
+     */
+    #s0;
+    #s1;
+    #s2;
+    #s3;
+
+    /**
+     * 构造函数，用一个可选的种子初始化生成器
+     * xoshiro256++ 算法要求四个独立的 64 位种子
+     * 我们使用 SplitMix64 算法从一个 32 位或 64 位种子生成这四个种子
+     * @param {number|bigint} [seed=Date.now()] - 用于初始化生成器的种子
+     */
+    constructor(seed = Date.now()) {
+        // 确保种子为 BigInt
+        const initialSeed = typeof seed === 'number' ? BigInt(Math.floor(seed)) : BigInt(seed);
+
+        // 使用 SplitMix64 算法来初始化四个状态变量
+        const state = this.#splitmix64(initialSeed);
+        this.#s0 = state[0];
+        this.#s1 = state[1];
+        this.#s2 = state[2];
+        this.#s3 = state[3];
+    }
+
+    /**
+     * @private
+     * 64 位旋转操作
+     * @param {bigint} x - 要旋转的数
+     * @param {number} k - 旋转位数
+     * @returns {bigint} 旋转后的数
+     */
+    #rotl(x, k) {
+        // 使用 & 0xffffffffffffffffn 确保结果在 64 位以内
+        return ((x << BigInt(k)) | (x >> (64n - BigInt(k)))) & 0xffffffffffffffffn;
+    }
+
+    /**
+     * @private
+     * 使用 SplitMix64 算法从一个种子生成多个高质量的 64 位整数
+     * @param {bigint} seed - 单个 64 位种子
+     * @returns {bigint[]} - 包含四个 64 位整数的数组
+     */
+    #splitmix64(seed) {
+        let x = seed;
+        const results = [];
+        for (let i = 0; i < 4; i++) {
+            x = x + 0x9e3779b97f4a7c15n;
+            let z = x;
+            z = (z ^ (z >> 30n)) * 0xbf58476d1ce4e5b9n;
+            z = (z ^ (z >> 27n)) * 0x94d049bb133111ebn;
+            z = z ^ (z >> 31n);
+            results.push(z);
+        }
+        return results;
+    }
+
+    /**
+     * @private
+     * 生成一个 64 位无符号整数
+     * @returns {bigint} - 64 位无符号整数
+     */
+    #nextUInt64() {
+        const result = this.#rotl(this.#s0 + this.#s3, 23);
+
+        const t = this.#s1 << 17n;
+
+        this.#s2 = this.#s2 ^ this.#s0;
+        this.#s3 = this.#s3 ^ this.#s1;
+        this.#s1 = this.#s1 ^ this.#s2;
+        this.#s0 = this.#s0 ^ this.#s3;
+
+        this.#s2 = this.#s2 ^ t;
+        this.#s3 = this.#rotl(this.#s3, 45);
+
+        return result;
+    }
+
+    /**
+     * @private
+     * 生成一个在 [0, 1) 范围内的浮点数
+     * @returns {number} - 浮点数
+     */
+    #nextFloat() {
+        const c = 0x1fffffffffffffn;
+        const d = 0x20000000000000n;
+        // 强制将其中一个操作数转换为 Number，以执行浮点数除法
+        return Number(this.#nextUInt64() & c) / Number(d);
+    }
+
+    /**
+     * 生成一个或多个指定范围内的随机数
+     * @param {number} [min=0] - 随机数的下限
+     * @param {number} [max=1] - 随机数的上限
+     * @param {number} [count=1] - 要生成的随机数数量
+     * @returns {number | number[]} - 如果count为1，返回单个随机数；否则返回一个随机数数组
+     */
+    generate(min = 0, max = 1, count = 1) {
+        if (count < 1) {
+            return [];
+        }
+
+        // 确保min小于max
+        if (min > max) {
+            [min, max] = [max, min];
+        }
+
+        if (count === 1) {
+            return this.#generateSingle(min, max);
+        }
+
+        const results = [];
+        for (let i = 0; i < count; i++) {
+            results.push(this.#generateSingle(min, max));
+        }
+        return results;
+    }
+
+    /**
+     * @private
+     * 生成一个指定范围内的随机数
+     * @param {number} min - 随机数的下限
+     * @param {number} max - 随机数的上限
+     * @returns {number} - 一个在[min, max)范围内的随机数
+     */
+    #generateSingle(min, max) {
+        const randomFloat = this.#nextFloat();
+
+        // 映射到指定的 [min, max) 范围
+        return min + randomFloat * (max - min);
+    }
+}
+
+/**
+ * @classdesc Mersenne Twister (MT19937) 伪随机数生成器
+ * 这是一个使用 32 位整数状态的经典算法
+ * 它能够生成高质量的伪随机数，周期长达 2^19937 - 1
+ */
+class _MT19937 {
+    #state = new Array(624);
+    #index = 0;
+
+    /**
+     * 构造函数，用一个可选的种子初始化生成器
+     * @param {number} [seed=Date.now()] - 用于初始化生成器的 32 位整数种子
+     */
+    constructor(seed = Date.now()) {
+        this.seed(seed);
+    }
+
+    /**
+     * 使用新的种子重新初始化生成器
+     * @param {number} seed - 新的种子
+     */
+    seed(seed) {
+        this.#state[0] = Number(seed) >>> 0;
+        for (let i = 1; i < 624; i++) {
+            const s = this.#state[i - 1] ^ (this.#state[i - 1] >>> 30);
+            this.#state[i] = (((((s & 0xffff0000) >>> 16) * 1812433253) << 16) + (s & 0x0000ffff) * 1812433253 + i) >>> 0;
+        }
+        this.#index = 624;
+    }
+
+    _twist() {
+        for (let i = 0; i < 624; i++) {
+            const y = (this.#state[i] & 0x80000000) | (this.#state[(i + 1) % 624] & 0x7fffffff);
+            this.#state[i] = this.#state[(i + 397) % 624] ^ (y >>> 1);
+            if (y % 2 !== 0) {
+                this.#state[i] = this.#state[i] ^ 0x9908b0df;
+            }
+        }
+    }
+
+    _nextUInt32() {
+        if (this.#index >= 624) {
+            this._twist();
+            this.#index = 0;
+        }
+        let y = this.#state[this.#index++];
+        y ^= (y >>> 11);
+        y ^= ((y << 7) & 0x9d2c5680);
+        y ^= ((y << 15) & 0xefc60000);
+        y ^= (y >>> 18);
+        return y >>> 0;
+    }
+
+    /**
+     * 生成一个在 [0, 1) 范围内的浮点数
+     * @returns {number} 浮点数
+     */
+    nextFloat() {
+        return (this._nextUInt32() / 0xffffffff);
+    }
+
+    /**
+     * 生成一个或多个指定范围内的随机数
+     * @param {number} [min=0] - 随机数的下限（包含）
+     * @param {number} [max=1] - 随机数的上限（不包含）
+     * @param {number} [count=1] - 要生成的随机数数量
+     * @returns {number | number[]} 单个随机数或一个随机数数组
+     */
+    generate(min = 0, max = 1, count = 1) {
+        if (count < 1) return [];
+        if (min > max) [min, max] = [max, min];
+
+        if (count === 1) {
+            return this.#generateSingle(min, max);
+        }
+
+        const results = [];
+        for (let i = 0; i < count; i++) {
+            results.push(this.#generateSingle(min, max));
+        }
+        return results;
+    }
+
+    #generateSingle(min, max) {
+        return min + this.nextFloat() * (max - min);
+    }
+}
+
+const HRGenerator = {
+    MT19937: _MT19937,
+    Xoshiro256PlusPlus: _Xoshiro256PlusPlus,
+};
+/* 示例
+ * 使用 HRGenerator.Xoshiro256PlusPlus 创建一个实例
+console.log('--- Xoshiro256PlusPlus 示例 ---');
+const xoshiroRng = new HRGenerator.Xoshiro256PlusPlus(Date.now());
+console.log('使用 Xoshiro256++ 生成:', xoshiroRng.generate(1, 100, 5));
+console.log('再次生成:', xoshiroRng.generate(1, 100, 5));
+
+ * 使用 HRGenerator.MT19937 创建另一个实例
+console.log('\n--- MT19937 示例 ---');
+const mtRng = new HRGenerator.MT19937(Date.now());
+console.log('使用 MT19937 生成:', mtRng.generate(1, 100, 5));
+console.log('再次生成:', mtRng.generate(1, 100, 5));
+*/
+
+
+/**
+ * @classdesc WGS84 <=> GCJ02 <=> BD09 <=> ECEF 坐标转换
  * @version 1.1.0
  * @changelog
  * - 1.1.0: 更新 WGS84 长半轴为 6378137.0，优化迭代逼近和异常处理，添加缓存机制
@@ -41,10 +291,10 @@
  * - registerConverter(systemName, { to, from }): 注册新坐标系转换方法
  *
  * 注意事项：
- * - 所有经纬度输入输出单位为角度（degrees），海拔和 ECEF 坐标单位为米。
- * - 转换仅对中国大陆境内的坐标有效，境外坐标直接返回原始值。
- * - 输入校验确保经纬度在合理范围内（纬度 [-90, 90]，经度 [-180, 180]，海拔 [-10000, 50000]）。
- * - 抛出 CoordinateError 对象以处理无效输入，调用者需使用 try-catch 捕获。
+ * - 所有经纬度输入输出单位为角度（degrees），海拔和 ECEF 坐标单位为米
+ * - 转换仅对中国大陆境内的坐标有效，境外坐标直接返回原始值
+ * - 输入校验确保经纬度在合理范围内（纬度 [-90, 90]，经度 [-180, 180]，海拔 [-10000, 50000]）
+ * - 抛出 CoordinateError 对象以处理无效输入，调用者需使用 try-catch 捕获
  *
  * @module CoordinateConverter
  */
@@ -356,23 +606,24 @@ const CoordinateConverter = {
 
 // === 下方挂载到全局 ===
 
+globalThis.HRGenerator = HRGenerator;
 globalThis.CoordinateConverter = CoordinateConverter;
 
 // === 下方注册扩展 ===
 
 let ext = seal.ext.find('SheepLib');
 if (!ext) {
-  ext = seal.ext.new('SheepLib', 'lyjjl', '1.0.0');
-  /*
-  const cmdE = seal.ext.newCmdItemInfo();
-  cmdE.name = '';
-  cmdE.help = '';
-  cmdE.solve = (ctx, msg, cmdArgs) => {
-  };
-  ext.cmdMap[''] = cmdE;
-
-  由于本插件是一个库文件，暂时不计划添加指令
-  */
-  seal.ext.register(ext);
-  // 仅注册插件，表示加载成功
+    ext = seal.ext.new('SheepLib', 'lyjjl', '1.0.0');
+    /*
+    const cmdE = seal.ext.newCmdItemInfo();
+    cmdE.name = '';
+    cmdE.help = '';
+    cmdE.solve = (ctx, msg, cmdArgs) => {
+    };
+    ext.cmdMap[''] = cmdE;
+  
+    由于本插件是一个库文件，暂时不计划添加指令
+    */
+    seal.ext.register(ext);
+    // 仅注册插件，表示加载成功
 }
