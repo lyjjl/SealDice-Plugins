@@ -374,11 +374,11 @@ if (!ext) {
         let C_qq_length = seal.ext.getTemplateConfig(ext, "C_QQ").length;
         let C_QQ_Group_length = seal.ext.getTemplateConfig(ext, "C_QQ_Group").length;
         try {
-            for (let i = 0; i < C_QQ_length; i++) {
+            for (let i = 0; i < C_qq_length; i++) {
                 // 某：这个缩进有点怪异，嗯
                 // 某：在for循环里面调用异步API请求函数要写await关键字，不然会导致严重的性能问题和[object Promise]  （）
                 await A_request_N(url, "/send_private_msg", {
-                    "user_id": C_QQ[i],
+                    "user_id": C_qq[i],
                     "message": [{
                         "type": "text",
                         "data": {
@@ -394,7 +394,7 @@ if (!ext) {
         try {
             for (let i = 0; i < C_QQ_Group_length; i++) {
                 await A_request_N(url, "/send_group_msg", {
-                    "group_id": C_QQ_Group[i],
+                    "group_id": C_qq_Group[i],
                     "message": [{
                         "type": "text",
                         "data": {
@@ -408,6 +408,8 @@ if (!ext) {
         }
         console.log("步过群聊发送消息")
     }
+
+    
 
     /**
      * 从NC返回的QQ群成员列表中筛选出群主和管理员的信息
