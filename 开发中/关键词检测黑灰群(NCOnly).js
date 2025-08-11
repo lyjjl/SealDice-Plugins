@@ -25,6 +25,7 @@ if (!ext) {
     /**
      * 注意：
      * 命名中 C_ 开头的代表配置项有关
+     * A 开头的代表 API 调用相关
      * _N 结尾的代表是适配的 NapCat
      */
     seal.ext.registerStringConfig(ext, "C_wordlist", "在这里写你要筛选的关键词，英文逗号分割");
@@ -408,8 +409,6 @@ if (!ext) {
         console.log("步过群聊发送消息")
     }
 
-
-
     /**
      * 从NC返回的QQ群成员列表中筛选出群主和管理员的信息
      *
@@ -714,7 +713,7 @@ if (!ext) {
                 requestBody = parsedCustomBody;
             } catch (e) {
                 seal.replyToSender(ctx, msg, `错误：自定义请求体不是有效的 JSON 格式。\n详情：${e.message}`);
-                // return seal.ext.newCmdExecuteResult(false);
+                // return seal.ext.newcmdLeavexecuteResult(false);
             }
         }
 
@@ -729,7 +728,7 @@ if (!ext) {
 
             const reply = JSON.stringify(apiResponse, null, 2);
             seal.replyToSender(ctx, msg, `API 调用成功，响应：\n${reply}`);
-            return seal.ext.newCmdExecuteResult(true);
+            return seal.ext.newcmdLeavexecuteResult(true);
         } catch (error) {
             seal.replyToSender(ctx, msg, `API 调用失败：${error.message}`);
         }
@@ -739,6 +738,23 @@ if (!ext) {
     // 某：是非，代码疑似有点丑了，排版很怪，你要不用电脑找个美化工具美化下？
     //是非：唔啊，没找到美化工具
     // 某：我用手机整了，大概会好吧
+
+    const cmdLeave = seal.ext.newCmdItemInfo();
+    cmdLeave.name = 'leave';
+    cmdLeave.help = '远程退群：.leave <群号>';
+
+    cmdLeave.solve = async (ctx, msg, cmdArgs) => {
+        // TODO: 指令的具体逻辑
+        let group_id = cmdArgs.getArgN(1);
+        await A_request_N(url, "/set_group_leave", 
+            {
+            "group_id": group_id,
+            "is_dismiss": false
+            }
+        );
+    };
+
+    ext.cmdMap['leave'] = cmdLeave;
 
     const cmdGetGroupMsg = seal.ext.newCmdItemInfo();
     cmdGetGroupMsg.name = 'getmsg'; // 指令名
@@ -773,7 +789,7 @@ if (!ext) {
         // 这一句调试
         sendForwardedHistory(result, ctx.group.groupId);
 
-        return seal.ext.newCmdExecuteResult(true);
+        return seal.ext.newcmdLeavexecuteResult(true);
     }
     ext.cmdMap['getmsg'] = cmdGetGroupMsg;
 
