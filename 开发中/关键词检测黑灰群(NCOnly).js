@@ -540,129 +540,8 @@ if (!ext) {
      * 例如：123456789
      * @returns {Promise<void>}
      */
-    async function sendForwardedHistory(historyResponse, targetGroupId) {
-        console.info("进入 sendForwardedHistory 函数。");
-
-        // 确保 historyResponse 是一个有效的对象，并且 API 调用成功，包含消息数据
-        if (!historyResponse || typeof historyResponse !== 'object' ||
-            historyResponse.status !== 'ok' || historyResponse.retcode !== 0 ||
-            !historyResponse.data || !Array.isArray(historyResponse.data.messages)) {
-            console.error('sendForwardedHistory 错误：传入的 historyResponse 结构无效或 API 调用未成功。');
-            return;
-        }
-
-        // 确保 targetGroupId 是一个有效的正整数
-        if (typeof targetGroupId !== 'number' || !Number.isInteger(targetGroupId) || targetGroupId <= 0) {
-            console.error('sendForwardedHistory 错误：传入的 targetGroupId 无效，必须是一个正整数。');
-            return;
-        }
-
-        const messagesToForward = [];
-        const chatMessages = historyResponse.data.messages; // 提取原始聊天消息列表
-
-        // 注意：执行指令时要限制传参为最多100条。这样直接遍历才是安全的。
-        for (const msg of chatMessages) {
-            // 确保消息对象结构完整，避免运行时错误
-            if (!msg || !msg.sender || typeof msg.user_id === 'undefined') {
-                console.warn('sendForwardedHistory 警告：跳过了一个结构不完整的消息对象。', msg);
-                continue; // 跳过不完整的消息
-            }
-
-            // 根据成员身份添加前缀标记（聊天记录转发不会带身份）
-            let prefix = '';
-            switch (msg.sender.role) {
-                case 'member':
-                    prefix = ' [成员]';
-                    break;
-                case 'admin':
-                    prefix = ' [管理]';
-                    break;
-                case 'owner':
-                    prefix = ' [群主]';
-                    break;
-                default:
-                    prefix = ' [未知]'; // 处理未知角色
-            }
-
-            const contentArray = []; // 用于构建消息内容数组
-
-            // 优先处理结构化消息 (message_format === 'array')
-            if (msg.message_format === 'array' && Array.isArray(msg.message) && msg.message.length > 0) {
-                for (const msgSegment of msg.message) {
-                    // 处理文本段落：添加身份前缀
-                    if (msgSegment && msgSegment.type === 'text' && msgSegment.data && typeof msgSegment.data.text === 'string') {
-                        contentArray.push({
-                            type: 'text',
-                            data: {
-                                text: msgSegment.data.text + prefix // 文本内容后追加身份前缀
-                            }
-                        });
-                    } else if (msgSegment) {
-                        // 兼容考虑
-                        contentArray.push(msgSegment);
-                    }
-                }
-            }
-
-            // 如果结构化消息数组为空或无效，尝试使用 raw_message 
-            if (contentArray.length === 0 && typeof msg.raw_message === 'string' && msg.raw_message.length > 0) {
-                contentArray.push({
-                    type: 'text',
-                    data: {
-                        text: msg.raw_message + prefix
-                    }
-                });
-            }
-
-            // 如果最终没有可转发的内容，则跳过此消息节点
-            if (contentArray.length === 0) {
-                console.warn('sendForwardedHistory 警告：跳过一条没有可转发内容的消息。', msg);
-                continue;
-            }
-
-            // 添加到待转发的合并消息列表
-            messagesToForward.push({
-                type: 'node', // 合并转发消息的节点类型
-                data: {
-                    user_id: msg.user_id, // 消息发送者的 QQ 号
-                    nickname: msg.sender.nickname || `用户 ${msg.user_id}`, // 使用发送者昵称，若无则显示 QQ 号
-                    content: contentArray, // 消息内容数组
-                }
-            });
-        }
-
-        //  检查是否有消息需要转发
-        if (messagesToForward.length === 0) {
-            console.info('sendForwardedHistory：没有可供转发的消息。');
-            return; // 没有消息可转发，直接返回
-        }
-
-        // 构建请求体
-        const requestBody = {
-            group_id: targetGroupId, // 目标群组 ID
-            messages: messagesToForward, // 待转发的消息节点数组
-            // 可选字段：根据需求可以从配置中读取并添加
-            // "news": [],
-            // "prompt": "",
-            // "summary": "",
-            // "source": ""
-        };
-
-        // 调用 API 发送合并转发消息
-        try {
-            console.info(`sendForwardedHistory：正在向群组 ${targetGroupId} 发送 ${messagesToForward.length} 条合并转发消息...`);
-            const response = await A_request_N(baseurl, '/send_forward_msg', requestBody);
-
-            // 检查 API 响应
-            if (response && response.status === 'ok') {
-                console.info(`sendForwardedHistory：合并转发消息发送成功！已成功将 ${messagesToForward.length} 条消息转发到群 ${targetGroupId}。`);
-            } else {
-                const errorMessage = response ? response.message || JSON.stringify(response) : '未知错误';
-                console.error(`sendForwardedHistory 错误：发送合并转发消息失败。API 响应：${errorMessage}`);
-            }
-        } catch (error) {
-            console.error('sendForwardedHistory 错误：调用 API 时发生异常：', error);
-        }
+    async function sendForwardedHistory(historyResponse, targetGroup) {
+        // point
     }
 
 
@@ -715,7 +594,7 @@ if (!ext) {
                 requestBody = parsedCustomBody;
             } catch (e) {
                 seal.replyToSender(ctx, msg, `错误：自定义请求体不是有效的 JSON 格式。\n详情：${e.message}`);
-                // return seal.ext.newcmdLeavexecuteResult(false);
+                return seal.ext.newCmdExecuteResult(false);
             }
         }
 
@@ -730,7 +609,7 @@ if (!ext) {
 
             const reply = JSON.stringify(apiResponse, null, 2);
             seal.replyToSender(ctx, msg, `API 调用成功，响应：\n${reply}`);
-            return seal.ext.newcmdLeavexecuteResult(true);
+            return seal.ext.newCmdExecuteResult(true);
         } catch (error) {
             seal.replyToSender(ctx, msg, `API 调用失败：${error.message}`);
         }
@@ -771,7 +650,7 @@ if (!ext) {
         }
         // 某：这里还没写对应的函数，先注释掉
 
-        reply = "群号：" + cmdArgs.getArgN(1) + " 数量：" + cmdArgs.getArgN(2);
+        reply = "群号：" + cmdArgs.getArgN(1) + " 数量：" + count;
 
         seal.replyToSender(ctx, msg, reply);
         let result = await A_request_N(
@@ -785,13 +664,11 @@ if (!ext) {
             }
         );
         // 某：我试试高可读性写法
-        console.log("运行到返回");
-        seal.replyToSender(ctx, msg, "返回：");
-        seal.replyToSender(ctx, msg, result);
+        seal.replyToSender(ctx, msg, `返回\n` + JSON.stringify(result, null, 2));
         // 这一句调试
-        sendForwardedHistory(result, ctx.group.groupId);
+        sendForwardedHistory(result);
 
-        return seal.ext.newcmdLeavexecuteResult(true);
+        return seal.ext.newCmdExecuteResult(true);
     }
     ext.cmdMap['getmsg'] = cmdGetGroupMsg;
 
