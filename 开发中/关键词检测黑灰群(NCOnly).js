@@ -8,9 +8,10 @@
 // @homepageURL   http://example.com/
 // ==/UserScript==
 
-let ext = seal.ext.find('CheckBlackGroup');
+const ext = seal.ext.find('CheckBlackGroup');
 // 直译：检查黑群（来自某的吐槽（？）
-let url = "http://127.0.0.1:10071/"; // NapCat API 服务器地址，测试用
+let url = "http://127.0.0.1:10071/";
+// NapCat API 服务器地址，测试用
 // 后面可以改成每次运行时获取配置到全局变量 (修改配置后需要重载生效) 或者 每次需要的时候获取 (无需重载)
 
 if (!ext) {
@@ -28,7 +29,7 @@ if (!ext) {
      * A 开头的代表 API 调用相关
      * _N 结尾的代表是适配的 NapCat
      */
-    seal.ext.registerStringConfig(ext, "C_wordlist", "在这里写你要筛选的关键词，英文逗号分割");
+    seal.ext.registerStringConfig(ext, "C_wordlist", "在这里写你要筛选的关键词，英文逗号分割。例如：诈骗，红包，兼职");
     // C_前缀代表和配置相关的变量，这个是屏蔽词列表
     seal.ext.registerStringConfig(ext, "C_url", "在这里写你的 HTTP 服务器地址，带上/");
     seal.ext.registerTemplateConfig(ext, "C_QQ", ["这里是用于接受的 QQ 号", "", "", ""]);
@@ -42,7 +43,7 @@ if (!ext) {
     // 注册配置项
 
     // 把配置项写到全局变量里面
-    let dailyExpression = seal.ext.getStringConfig(ext, "dailyExpression");
+    // 直接在注册任务时内联调用 seal.ext.getStringConfig(ext, "dailyExpression")
 
     /**
      * 检查输入内容是否包含屏蔽词
@@ -158,13 +159,15 @@ if (!ext) {
 
     /**
      * 向 NapCat API 发起 POST 请求。
-     * @param {string} baseurl - HTTP 服务器的 URL，应以斜杠结尾（虽然会自动标准化，但是这是好习惯）
+     * @param {string} baseurl - HTTP 服务器的 URL（会自动标准化）
      * @param {string} apipath - API 的路径。
      * @param {object} body - 请求体，将被 JSON.stringify 转换。
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null。
      */
     async function A_request_N(baseurl, apipath, body) { //这里的 A 代表使用 API 完成，后缀 N 代表适用于 NapCat
-        let Nurl = T_normalizeURL(baseurl + apipath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
+        // 移除 apipath 前置的所有斜杠，避免拼接时出现多余的斜杠
+        let cleanApiPath = apipath.replace(/^\/+/, '');
+        let Nurl = T_normalizeURL(baseurl + cleanApiPath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
 
         try {
             let response = await fetch(Nurl, {
@@ -371,8 +374,8 @@ if (!ext) {
         let C_qq_Group = seal.ext.getTemplateConfig(ext, "C_QQ_Group");
         //字面意思
         //获得一下长度，方便循环
-        let C_qq_length = seal.ext.getTemplateConfig(ext, "C_QQ").length;
-        let C_QQ_Group_length = seal.ext.getTemplateConfig(ext, "C_QQ_Group").length;
+        let C_qq_length = C_qq.length;
+        let C_QQ_Group_length = C_qq_Group.length;
         try {
             for (let i = 0; i < C_qq_length; i++) {
                 // 某：这个缩进有点怪异，嗯
@@ -386,7 +389,7 @@ if (!ext) {
                         }
                     }]
                 });
-            };
+            }
         } catch (e) {
             console.error("[Send] ERROR :", e.message);
         }
@@ -409,7 +412,7 @@ if (!ext) {
         console.log("步过群聊发送消息")
     }
 
-    
+
 
     /**
      * 从NC返回的QQ群成员列表中筛选出群主和管理员的信息
@@ -525,25 +528,70 @@ if (!ext) {
         // await getGroupANO(result);
         console.info(JSON.stringify(result, null, 2));
     }
-    testApiCall_get_group_msg_history(710703655);
+    // testApiCall_get_group_msg_history(710703655);
     // 调用测试函数
 
-
-
     /**
-     * 根据 /get_group_msg_history 返回的响应构建合并转发消息，
-     * 并通过 /send_forward_msg 将其发送到指定群组。
-     *
-     * @param {object} historyResponse - 完整的 /get_group_msg_history API 响应对象。
-     * 预期结构为 { status: "ok", retcode: 0, data: { messages: [...] } }
-     * @param {number} targetGroupId - 目标群组的纯数字 ID，合并转发消息将发送到此群组。
-     * 例如：123456789
+     * @description 将从 API 获取的历史消息处理并作为合并转发消息发送到指定的群组。
+     * @param {object} historyResponse - 从 get_group_msg_history 获取的原始响应体
+     * @param {number[]} targetGroup - 一个包含目标群号的数组。
+     * @param {string} baseurl - NapCat HTTP URL
      * @returns {Promise<void>}
      */
-    async function sendForwardedHistory(historyResponse, targetGroup) {
-        // point
-    }
+    async function sendForwardedHistory(historyResponse, targetGroup, baseurl) {
+        // 校验
+        if (!historyResponse?.data?.messages || !Array.isArray(targetGroup) || targetGroup.length === 0) {
+            console.error('错误：传入的 historyResponse 无效或 targetGroup 为空。');
+            return;
+        }
+        if (!baseurl) {
+            console.error('错误：必须提供 url 参数。');
+            return;
+        }
 
+        const forwardedMessages = historyResponse.data.messages.map(message => {
+            let nickname = message.sender.nickname;
+            if (message.sender.role === 'owner') {
+                nickname += ' [群主]';
+            } else if (message.sender.role === 'admin') {
+                nickname += ' [管理员]';
+            }
+            return {
+                type: 'node',
+                data: {
+                    user_id: message.sender.user_id,
+                    nickname: nickname,
+                    content: message.message
+                }
+            };
+        });
+
+        const sendPromises = targetGroup.map(async (groupId) => {
+            const body = {
+                group_id: groupId,
+                messages: forwardedMessages,
+                source: "聊天记录",
+                prompt: `[转发] 来自群 ${historyResponse.data.messages[0]?.group_id || ''} 的消息`,
+            };
+
+            try {
+                console.log(`准备向群 ${groupId} 发送合并转发消息...`);
+                const response = await A_request_N(baseurl, "/send_group_forward_msg", body);
+
+                if (response && response.retcode === 0) {
+                    console.log(`成功向群 ${groupId} 发送消息，message_id: ${response.data.message_id}`);
+                } else {
+                    console.error(`向群 ${groupId} 发送消息失败，响应:`, response);
+                }
+            } catch (error) {
+                console.error(`向群 ${groupId} 发送消息时发生网络或代码错误:`, error);
+            }
+        });
+
+        // 等待所有发送任务完成
+        await Promise.all(sendPromises);
+        console.log('所有转发任务已执行完毕。');
+    }
 
     // 这个改一改可以用在通知指定群/人那里
     /**
@@ -627,10 +675,10 @@ if (!ext) {
     cmdLeave.solve = async (ctx, msg, cmdArgs) => {
         // TODO: 指令的具体逻辑
         let group_id = cmdArgs.getArgN(1);
-        await A_request_N(url, "/set_group_leave", 
+        await A_request_N(url, "/set_group_leave",
             {
-            "group_id": group_id,
-            "is_dismiss": false
+                "group_id": group_id,
+                "is_dismiss": false
             }
         );
     };
@@ -650,7 +698,7 @@ if (!ext) {
         }
         // 某：这里还没写对应的函数，先注释掉
 
-        reply = "群号：" + cmdArgs.getArgN(1) + " 数量：" + count;
+        let reply = "群号：" + cmdArgs.getArgN(1) + " 数量：" + count;
 
         seal.replyToSender(ctx, msg, reply);
         let result = await A_request_N(
@@ -664,15 +712,13 @@ if (!ext) {
             }
         );
         // 某：我试试高可读性写法
-        seal.replyToSender(ctx, msg, `返回\n` + JSON.stringify(result, null, 2));
-        // 这一句调试
-        sendForwardedHistory(result);
+        sendForwardedHistory(result, seal.ext.getTemplateConfig(ext, "C_QQ_Group"), url);
 
         return seal.ext.newCmdExecuteResult(true);
     }
     ext.cmdMap['getmsg'] = cmdGetGroupMsg;
 
-    //非指令
+    // 非指令
     // 某：这里我考虑去掉了，可能有问题
     ext.onNotCommandReceived = async (ctx, msg) => {
         let messageContent = msg.message.trim();
@@ -712,7 +758,7 @@ if (!ext) {
         ext,
         "daily",
         // 某：我还是建议把这里改成 corn 的
-        dailyExpression, // 每天早上 7:30 执行
+        seal.ext.getStringConfig(ext, "dailyExpression"), // 每天早上 7:30 执行
         async (taskCtx) => {
             try {
                 console.info(`[定时任务] 执行函数 checkGroupName(ctx, msg)，时间戳：${taskCtx.now}`);
@@ -738,6 +784,4 @@ if (!ext) {
         // 某：已经被取代，很可能删除这段代码
     }
     */
-
-
 }
