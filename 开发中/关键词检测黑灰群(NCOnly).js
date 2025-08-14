@@ -379,7 +379,7 @@ if (!ext) {
         try {
             for (let i = 0; i < C_qq_length; i++) {
                 // 某：这个缩进有点怪异，嗯
-                // 某：在for循环里面调用异步API请求函数要写await关键字，不然会导致严重的性能问题和[object Promise]  （）
+                // 某：在for循环里面调用异步API请求函数要写await关键字，不然会导致性能问题和[object Promise]
                 await A_request_N(url, "/send_private_msg", {
                     "user_id": C_qq[i],
                     "message": [{
