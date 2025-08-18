@@ -15,19 +15,19 @@
 
 let ext = seal.ext.find('');
 if (!ext) {
-  ext = seal.ext.new('', '', '1.0.0');
+    ext = seal.ext.new('', '', '1.0.0');
 
-  const cmdE = seal.ext.newCmdItemInfo();
-  cmdE.name = '';
-  cmdE.help = '';
+    const cmdE = seal.ext.newCmdItemInfo();
+    cmdE.name = '';
+    cmdE.help = '';
 
-  cmdE.solve = (ctx, msg, cmdArgs) => {
-    // TODO: 指令的具体逻辑
-    
-  };
+    cmdE.solve = (ctx, msg, cmdArgs) => {
+        // TODO: 指令的具体逻辑
 
-  // 将命令注册到扩展中
-  ext.cmdMap[''] = cmdE;
+    };
 
-  seal.ext.register(ext);
+    // 将命令注册到扩展中
+    ext.cmdMap[''] = cmdE;
+
+    seal.ext.register(ext);
 }
