@@ -23,6 +23,7 @@ if (!ext) {
 
     cmdCHShow.solve = (ctx, msg, cmdArgs) => {
         seal.replyToSender(ctx, msg, count);
+        count = 0;
     };
 
     ext.onCommandReceived = (ctx, msg) => {
