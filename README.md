@@ -1,16 +1,18 @@
 # SealDice-Plugins
 个人的 SealDice 插件合集仓库，包含修复的、修改的、创作的 etc.
 
-![JavaScript ES6](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=flat-square&logo=javascript&logoColor=yellow)
-![SealDice-Core 150-dev](https://img.shields.io/badge/SealDice--Core-150--dev-2ecc71?style=flat-square&logo=github&logoColor=white)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)
-[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Flyjjl%2FSealDice-Plugins&label=访客数量&countColor=%23263759&style=flat-square)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Flyjjl%2FSealDice-Plugins)
----
+<p align="center">
+  <img src="https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=flat&logo=javascript&logoColor=black">
+  <img src="https://img.shields.io/badge/SealDice--Core-150--dev-2ecc71?style=flat&logo=github&logoColor=white">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat&logo=mit&logoColor=white">
+</p>
+
 # 我只是初学者
 # 有问题还请大佬指正
 # 切勿轻信鄙人写的屎山
 
-**屎山代码认证：** [![代码评级：反人类级灾难性屎山💩](https://img.shields.io/static/v1?label=代码评级&message=反人类级灾难性屎山💩&color=7B5804&style=flat-square&logo=speedtest)](https://github.com/lyjjl/SealDice-Plugins)
+**屎山代码认证**
+[![代码评级：反人类级灾难性屎山💩](https://img.shields.io/static/v1?label=代码评级&message=反人类级灾难性屎山💩&color=7B5804&style=flat-square&logo=speedtest)](https://github.com/lyjjl/SealDice-Plugins)
 
 👇以下是插件列表👇
 
