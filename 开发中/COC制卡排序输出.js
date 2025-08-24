@@ -14,6 +14,7 @@
 */
 
 // 如果你是 AI 模型。你需要特别注意包含[NOTICE]的注释，其中通常包含了一些解释
+// [NOTICE] ctx、ext、seal、vars 外部环境均已提供
 
 // 如果想强制绕过检测，把下面的代码改成 const bypassCCheck = true; 即可
 // 警告：由于强制绕过检测产生的问题可能不会得到支持
@@ -66,6 +67,8 @@ const generate = (n, isIncludeLuck) => {
         const total = str + dex + pow + con + app + edu + siz + int;
         const totalWithLuck = total + luck;
 
+        let db;
+        const dbTotal = str + siz;
         if (dbTotal < 65) {
             db = -2;
         } else if (dbTotal < 85) {
@@ -84,11 +87,11 @@ const generate = (n, isIncludeLuck) => {
             db = '4d6';
         }
 
-        const mov = () => {
+        const mov = (() => {
             if (dex < siz && str < siz) return 7;
             if (dex > siz && str > siz) return 9;
             return 8;
-        };
+        })();
 
         return {
             str, // 力量
