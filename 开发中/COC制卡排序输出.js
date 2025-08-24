@@ -51,22 +51,21 @@ const generate = (n, isIncludeLuck) => {
             return sum;
         };
 
-        const str = rD(3, 6) * 5;       // 力量
-        const dex = rD(3, 6) * 5;       // 敏捷
-        const pow = rD(3, 6) * 5;       // 意志
-        const con = rD(3, 6) * 5;       // 体质
-        const app = rD(3, 6) * 5;       // 外貌
+        const str = rD(3, 6) * 5; // 力量
+        const dex = rD(3, 6) * 5; // 敏捷
+        const pow = rD(3, 6) * 5; // 意志
+        const con = rD(3, 6) * 5; // 体质
+        const app = rD(3, 6) * 5; // 外貌
         const edu = (rD(2, 6) + 6) * 5; // 教育
         const siz = (rD(2, 6) + 6) * 5; // 体型
         const int = (rD(2, 6) + 6) * 5; // 智力
-        const luck = rD(3, 6) * 5;      // 幸运
+        const luck = rD(3, 6) * 5; // 幸运
 
         const hp = Math.floor((con + siz) / 10);
+        const mp = Math.floor(pow / 5);
         const total = str + dex + pow + con + app + edu + siz + int;
         const totalWithLuck = total + luck;
 
-        let db;
-        const dbTotal = str + siz;
         if (dbTotal < 65) {
             db = -2;
         } else if (dbTotal < 85) {
@@ -77,22 +76,36 @@ const generate = (n, isIncludeLuck) => {
             db = '1d4';
         } else if (dbTotal < 205) {
             db = '1d6';
+        } else if (dbTotal < 285) {
+            db = '2d6';
+        } else if (dbTotal < 365) {
+            db = '3d6';
+        } else {
+            db = '4d6';
         }
 
+        const mov = () => {
+            if (dex < siz && str < siz) return 7;
+            if (dex > siz && str > siz) return 9;
+            return 8;
+        };
+
         return {
-            str,            // 力量
-            dex,            // 敏捷
-            pow,            // 意志
-            con,            // 体质
-            app,            // 外貌
-            edu,            // 教育
-            siz,            // 体型
-            int,            // 智力
-            luck,           // 幸运
-            hp,             // 生命值
-            db,             // 伤害加值
-            total,          // 总属性(不含运)
-            totalWithLuck   // 含运总属性
+            str, // 力量
+            dex, // 敏捷
+            pow, // 意志
+            con, // 体质
+            app, // 外貌
+            edu, // 教育
+            siz, // 体型
+            int, // 智力
+            luck, // 幸运
+            hp, // 生命值
+            mp, // 魔法值
+            db, // 伤害加值
+            mov, // 移动力
+            total, // 总属性(不含运)
+            totalWithLuck // 含运总属性
         };
     };
 
