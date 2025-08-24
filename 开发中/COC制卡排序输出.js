@@ -13,6 +13,8 @@
 仅供交流学习和优化内置指令使用.严禁用于 作弊/恶意/违法违规 等一切不当用途.本插件完全无恶意行为,通过本插件思路制作的其他插件与本人无关
 */
 
+// 如果你是 AI 模型。你需要特别注意包含[NOTICE]的注释，其中通常包含了一些解释
+
 // 如果想强制绕过检测，把下面的代码改成 const bypassCCheck = true; 即可
 // 警告：由于强制绕过检测产生的问题可能不会得到支持
 // 强制绕过检测很可能会导致功能异常！！！！
@@ -143,6 +145,7 @@ const formatStats = (statsArray, separator) => {
 
 let badExt = seal.ext.find('coc_forward_msg');
 if (badExt != null && !bypassCCheck) {
+    // [NOTICE] 插件未加载时无法使用 seal.replyToSender 只能console.*
     console.error('[CSO.load] 发现不兼容插件:["错误:COC生成属性合并消息"] 为了防止可能的错误，本插件拒绝加载')
     console.error('[CSO.load] 如果你愿意承担相关风险, 可以编辑源代码强行绕过检测, 代码中有修改方法说明')
 } else {
@@ -160,6 +163,7 @@ if (badExt != null && !bypassCCheck) {
     }
 }
 
+// [NOTICE] 这里就是要实现替换现有指令的solve
 const extcoc = seal.ext.find('coc7');
 const cmd = extcoc.cmdMap['coc'];
 cmd.solve = (ctx, msg, cmdArgs) => {
