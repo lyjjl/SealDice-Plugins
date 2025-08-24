@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         COC7制卡结果排序输出(CSO)
 // @author       某人
-// @version      1.0.0
+// @version      1.0.1
 // @description  让COC N制卡结果排序后输出，可选是否含运排序。与 错误:COC生成属性合并消息 不兼容！！！！！
 // @timestamp    1756044088
 // @license      MIT
@@ -152,7 +152,7 @@ if (badExt != null && !bypassCCheck) {
     }
     let ext = seal.ext.find('coc_sorted_output');
     if (!ext) {
-        ext = seal.ext.new('coc_sorted_output', '某人', '1.0.0');
+        ext = seal.ext.new('coc_sorted_output', '某人', '1.0.1');
         seal.ext.register(ext);
         // 一般情况下，默认配置不会害你......
         seal.ext.registerIntConfig(ext, "制卡上限", 10);
@@ -184,13 +184,13 @@ cmd.solve = (ctx, msg, cmdArgs) => {
     const text = formatStats(
         generate(
             val,
-            seal.getBoolConfig(ext, "是否使用含运总数总属性排序")
+            seal.ext.getBoolConfig(ext, "是否使用含运总数总属性排序")
         ),
         seal.formatTmpl(ctx, "COC:制卡_分隔符")
     )
     let result = textTemplate.replaceAll("*>*node*<*", text);
 
-    seal.seal.replyToSender(ctx, msg, result);
+    seal.replyToSender(ctx, msg, result);
 
     return seal.ext.newCmdExecuteResult(true);
 };
