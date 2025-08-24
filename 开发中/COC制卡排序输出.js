@@ -188,14 +188,14 @@ cmd.solve = (ctx, msg, cmdArgs) => {
         ),
         seal.formatTmpl(ctx, "COC:制卡_分隔符")
     )
-    text.replaceAll("*>*node*<*", text);
+    let result = textTemplate.replaceAll("*>*node*<*", text);
 
-    seal.seal.replyToSender(ctx, msg, text);
+    seal.seal.replyToSender(ctx, msg, result);
 
     return seal.ext.newCmdExecuteResult(true);
 };
 
 if (mount2global) {
-    globalThis.statsGenerator = generate(n, isIncludeLuck);
-    globalThis.formatStats = formatStats(statsArray, separator);
+    globalThis.statsGenerator = generate;
+    globalThis.formatStats = formatStats;
 }
