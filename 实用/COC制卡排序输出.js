@@ -3,9 +3,12 @@
 // @author       某人
 // @version      1.0.1
 // @description  让COC N制卡结果排序后输出，可选是否含运排序。与 错误:COC生成属性合并消息 不兼容！！！！！
-// @timestamp    1756044088
+// @timestamp    1756096569
 // @license      MIT
+// @sealVersion  1.4.6
 // @homepageURL  https://github.com/lyjjl
+// @updateUrl    https://ghfast.top/https://raw.githubusercontent.com/lyjjl/SealDice-Plugins/main/实用/COC制卡排序输出.js
+// @updateUrl    https://raw.githubusercontent.com/lyjjl/SealDice-Plugins/main/实用/COC制卡排序输出.js
 // ==/UserScript==
 
 /*
