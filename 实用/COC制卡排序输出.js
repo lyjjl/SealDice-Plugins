@@ -2,7 +2,7 @@
 // @name         COC7制卡结果排序输出(CSO)
 // @author       某人
 // @version      1.0.1
-// @description  让COC N制卡结果排序后输出，可选是否含运排序。与 错误:COC生成属性合并消息 不兼容！！！！！
+// @description  让COC N制卡结果排序后输出并拓展输出内容，可选是否含运排序。卸载本插件后需要重启核心。与 错误:COC生成属性合并消息 不兼容！！！！！
 // @timestamp    1756096569
 // @license      MIT
 // @sealVersion  1.4.6
