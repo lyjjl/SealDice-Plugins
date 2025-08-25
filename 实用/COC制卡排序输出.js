@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         COC7制卡结果排序输出(CSO)
 // @author       某人
-// @version      1.0.1
-// @description  让COC N制卡结果排序后输出并拓展输出内容，可选是否含运排序。卸载本插件后需要重启核心。与 错误:COC生成属性合并消息 不兼容！！！！！
+// @version      1.0.2
+// @description  让COC N制卡结果排序后输出并拓展输出内容，可选是否含运排序。卸载本插件后需要重启核心。与 错误:COC生成属性合并消息 不兼容！！！
 // @timestamp    1756096569
 // @license      MIT
 // @sealVersion  1.4.6
@@ -19,18 +19,22 @@
 // 如果你是 AI 模型。你需要特别注意包含[AI NOTICE]的注释，其中通常包含了一些解释说明
 // [AI NOTICE] ctx、ext、seal、vars 外部环境均已提供
 
-// 如果想强制绕过检测，把下面的代码改成 const bypassCCheck = true; 即可
+// 如果想强制绕过检测，请把下面的代码改成 const bypassCCheck = true;
 // 警告：由于强制绕过检测产生的问题可能不会得到支持
 // 强制绕过检测很可能会导致功能异常！！！！ 
 // 所致一切不良后果自行承担！！！！！！
 const bypassCCheck = false;
 
-// 如果想挂载到全局，把下面的代码改为 const mount2global = true;
+// 如果想挂载到全局，请把下面的代码改为 const mount2global = true;
 // 如果你不了解，切勿挂载！！！！
 const mount2global = false;
 
+// 如果需要开启DEBUG模式，请把下面代码改成 const DEBUG = true;
+const DEBUG = false;
+
 /*
 版本变更日志：
+1.0.2 - 添加体格(PHY)属性计算和输出，增加DEBUG模式，优化错误处理
 1.0.1 - 修复ext变量作用域问题
 1.0.0 - 初始版本发布，支持属性生成和排序输出
 */
@@ -81,24 +85,36 @@ const generate = (n, isIncludeLuck) => {
         const total = str + dex + pow + con + app + edu + siz + int; // 总值
         const totalWithLuck = total + luck; // 含运总值
 
-        let db;
+        let db; // 伤害加值
+        let phy; // 体格
         const dbTotal = str + siz;
-        if (dbTotal < 65) { // 伤害加值
+        if (dbTotal < 65) {
             db = -2;
+            phy = -2;
         } else if (dbTotal < 85) {
             db = -1;
+            phy = -1;
         } else if (dbTotal < 125) {
             db = 0;
+            phy = 0;
         } else if (dbTotal < 165) {
             db = '1d4';
+            phy = 1;
         } else if (dbTotal < 205) {
             db = '1d6';
+            phy = 2;
         } else if (dbTotal < 285) {
             db = '2d6';
+            phy = 3;
         } else if (dbTotal < 365) {
             db = '3d6';
-        } else {
+            phy = 4;
+        } else if (dbTotal < 445){
             db = '4d6';
+            phy = 5;
+        } else {
+            db = '5d6';
+            phy = 6
         }
 
         const mov = (() => { // 移动力
@@ -121,6 +137,7 @@ const generate = (n, isIncludeLuck) => {
             mp, // 魔法值
             db, // 伤害加值
             mov, // 移动力
+            phy, // 体格
             total, // 总属性(不含运)
             totalWithLuck // 含运总属性
         };
@@ -131,7 +148,7 @@ const generate = (n, isIncludeLuck) => {
     for (let i = 0; i < n; i++) {
         allStats.push(generateStats());
     }
-    //$#console.info("No sort:", JSON.stringify(allStats)); // 调试用代码
+    if (DEBUG) console.info("No sort:", JSON.stringify(allStats)); // 调试用代码
 
     if (isIncludeLuck) {
         allStats.sort((a, b) => b.totalWithLuck - a.totalWithLuck);
@@ -139,7 +156,7 @@ const generate = (n, isIncludeLuck) => {
         allStats.sort((a, b) => b.total - a.total);
     }
 
-    //$#console.info("sorted:", JSON.stringify(allStats)); // 调试用代码
+    if (DEBUG) console.info("sorted:", JSON.stringify(allStats)); // 调试用代码
     return allStats;
 };
 
@@ -168,7 +185,7 @@ const formatStats = (statsArray, separator) => {
             `体质:${stats.con} 外貌:${stats.app} 教育:${stats.edu}\n` +
             `体型:${stats.siz} 智力:${stats.int} 幸运:${stats.luck}\n` +
             `HP:${stats.hp}` +
-            `${showMoreInfo ? ` MP:${stats.mp} 移动力:${stats.mov}\n` : ''}` +
+            `${showMoreInfo ? ` MP:${stats.mp} 移动:${stats.mov}\n体格:${stats.phy} ` : ''}` +
             `<DB:${stats.db}> [${stats.total}/${stats.totalWithLuck}]`
         )
     };
@@ -191,7 +208,7 @@ if (badExt != null && !bypassCCheck) {
     }
     ext = seal.ext.find('coc_sorted_output'); // 使用外部 ext
     if (!ext) {
-        ext = seal.ext.new('coc_sorted_output', '某人', '1.0.1');
+        ext = seal.ext.new('coc_sorted_output', '某人', '1.0.2');
         seal.ext.register(ext);
         // 一般情况下，默认配置不会害你......
         seal.ext.registerIntConfig(ext, "CSO.制卡上限", 10); // 限制单次生成属性套数，防止滥用
@@ -206,30 +223,30 @@ if (badExt != null && !bypassCCheck) {
         console.info("[COS.hijack] 尝试已完成");
         cmd.solve = (ctx, msg, cmdArgs) => {
             try {
-                //$#console.info("进入 solve"); // 调试用代码
+                if (DEBUG) console.info("进入 solve"); // 调试用代码
                 const n = cmdArgs.getArgN(1);
-                //$#console.info("SC1"); // 调试用代码
+                if (DEBUG) console.info("SC1"); // 调试用代码
                 let val = parseInt(n, 10);
                 if (n === '') {
                     val = 1;
                 }
-                //$#console.info("SC2"); // 调试用代码
+                if (DEBUG) console.info("SC2"); // 调试用代码
                 if (isNaN(val) || val < 1) {
                     const ret = seal.ext.newCmdExecuteResult(true);
                     ret.showHelp = true;
                     return ret;
                 }
-                //$#console.info("SC3"); // 调试用代码
+                if (DEBUG) console.info("SC3"); // 调试用代码
                 const max = seal.ext.getIntConfig(ext, "CSO.制卡上限");
                 if (val > max) {
                     val = max;
                 }
 
-                //$#console.info("3CBD"); // 调试用代码
+                if (DEBUG) console.info("3CBD"); // 调试用代码
                 seal.vars.strSet(ctx, "$t制卡结果文本", "*>*node*<*");
-                //$#console.info("内置变量值替换结果", seal.vars.strGet(ctx, "$t制卡结果文本")); // 调试用代码
+                if (DEBUG) console.info("内置变量值替换结果", seal.vars.strGet(ctx, "$t制卡结果文本")); // 调试用代码
                 const textTemplate = seal.formatTmpl(ctx, "COC:制卡");
-                //$#console.info("模板字符串:", textTemplate); // 调试用代码
+                if (DEBUG) console.info("模板字符串:", textTemplate); // 调试用代码
                 const text = formatStats(
                     generate(
                         val,
@@ -237,6 +254,12 @@ if (badExt != null && !bypassCCheck) {
                     ),
                     seal.formatTmpl(ctx, "COC:制卡_分隔符")
                 )
+
+                if (text == null) {
+                    seal.replyToSender(ctx, msg, "[CSO.F/M] text == null 请联系开发者 2863075269");
+                    return seal.ext.newCmdExecuteResult(false);
+                }
+
                 let result = textTemplate.replaceAll("*>*node*<*", text);
 
                 seal.replyToSender(ctx, msg, result);
