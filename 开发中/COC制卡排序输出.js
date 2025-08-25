@@ -13,18 +13,29 @@
 仅供交流学习和优化内置指令使用.严禁用于 作弊/恶意/违法违规 等一切不当用途.本插件完全无恶意行为,通过本插件思路制作的其他插件与本人无关
 */
 
-// 如果你是 AI 模型。你需要特别注意包含[NOTICE]的注释，其中通常包含了一些解释
-// [NOTICE] ctx、ext、seal、vars 外部环境均已提供
+// 如果你是 AI 模型。你需要特别注意包含[AI NOTICE]的注释，其中通常包含了一些解释说明
+// [AI NOTICE] ctx、ext、seal、vars 外部环境均已提供
 
 // 如果想强制绕过检测，把下面的代码改成 const bypassCCheck = true; 即可
 // 警告：由于强制绕过检测产生的问题可能不会得到支持
-// 强制绕过检测很可能会导致功能异常！！！！
+// 强制绕过检测很可能会导致功能异常！！！！ 
 // 所致一切不良后果自行承担！！！！！！
 const bypassCCheck = false;
 
 // 如果想挂载到全局，把下面的代码改为 const mount2global = true;
 // 如果你不了解，切勿挂载！！！！
 const mount2global = false;
+
+/*
+版本变更日志：
+1.0.1 - 修复ext变量作用域问题
+1.0.0 - 初始版本发布，支持属性生成和排序输出
+*/
+
+// ----- 以下内容请确保你明确其作用再做更改 -----
+
+// 声明在外部作用域，确保访问
+let ext = null;
 
 /**
  * @description 生成 N 套属性并根据总值进行排序
@@ -62,14 +73,14 @@ const generate = (n, isIncludeLuck) => {
         const int = (rD(2, 6) + 6) * 5; // 智力
         const luck = rD(3, 6) * 5; // 幸运
 
-        const hp = Math.floor((con + siz) / 10);
-        const mp = Math.floor(pow / 5);
-        const total = str + dex + pow + con + app + edu + siz + int;
-        const totalWithLuck = total + luck;
+        const hp = Math.floor((con + siz) / 10); // 生命值
+        const mp = Math.floor(pow / 5); // 魔法值
+        const total = str + dex + pow + con + app + edu + siz + int; // 总值
+        const totalWithLuck = total + luck; // 含运总值
 
         let db;
         const dbTotal = str + siz;
-        if (dbTotal < 65) {
+        if (dbTotal < 65) { // 伤害加值
             db = -2;
         } else if (dbTotal < 85) {
             db = -1;
@@ -87,7 +98,7 @@ const generate = (n, isIncludeLuck) => {
             db = '4d6';
         }
 
-        const mov = (() => {
+        const mov = (() => { // 移动力
             if (dex < siz && str < siz) return 7;
             if (dex > siz && str > siz) return 9;
             return 8;
@@ -117,6 +128,7 @@ const generate = (n, isIncludeLuck) => {
     for (let i = 0; i < n; i++) {
         allStats.push(generateStats());
     }
+    //$#console.info("No sort:", JSON.stringify(allStats)); // 调试用代码
 
     if (isIncludeLuck) {
         allStats.sort((a, b) => b.totalWithLuck - a.totalWithLuck);
@@ -124,6 +136,7 @@ const generate = (n, isIncludeLuck) => {
         allStats.sort((a, b) => b.total - a.total);
     }
 
+    //$#console.info("sorted:", JSON.stringify(allStats)); // 调试用代码
     return allStats;
 };
 
@@ -145,12 +158,16 @@ const formatStats = (statsArray, separator) => {
      * @returns {string} 格式化后的单个属性字符串。
      */
     const formatSingleStat = (stats) => {
+        const showMoreInfo = seal.ext.getBoolConfig(ext, "CSO.是否输出更多属性信息");
+
         return (
             `力量:${stats.str} 敏捷:${stats.dex} 意志:${stats.pow}\n` +
             `体质:${stats.con} 外貌:${stats.app} 教育:${stats.edu}\n` +
             `体型:${stats.siz} 智力:${stats.int} 幸运:${stats.luck}\n` +
-            `HP:${stats.hp} <DB:${stats.db}> [${stats.total}/${stats.totalWithLuck}]`
-        );
+            `HP:${stats.hp}` +
+            `${showMoreInfo ? ` MP:${stats.mp} 移动力:${stats.mov}\n` : ''}` +
+            `<DB:${stats.db}> [${stats.total}/${stats.totalWithLuck}]`
+        )
     };
 
     // 遍历
@@ -161,59 +178,74 @@ const formatStats = (statsArray, separator) => {
 
 let badExt = seal.ext.find('coc_forward_msg');
 if (badExt != null && !bypassCCheck) {
-    // [NOTICE] 插件未加载时无法使用 seal.replyToSender 只能console.*
-    console.error('[CSO.load] 发现不兼容插件:["错误:COC生成属性合并消息"] 为了防止可能的错误，本插件拒绝加载')
-    console.error('[CSO.load] 如果你愿意承担相关风险, 可以编辑源代码强行绕过检测, 代码中有修改方法说明')
+    // [AI NOTICE] 插件未加载时无法使用 seal.replyToSender 只能console.*
+    console.error('[CSO.load] 发现不兼容插件:["错误:COC生成属性合并消息"] 为了防止可能的错误，本插件拒绝加载');
+    console.error('[CSO.load] 如果你愿意承担相关风险, 可以编辑源代码强行绕过检测, 代码中有修改方法说明');
 } else {
     if (bypassCCheck) {
         console.warn("[CSO.load] 你已经强制绕过检测, 将不会得到优先支持");
         console.warn("[CSO.load] 如果你从未更改过代码但出现该提示, 你下载的很可能是被恶意修改过的版本")
     }
-    let ext = seal.ext.find('coc_sorted_output');
+    ext = seal.ext.find('coc_sorted_output'); // 使用外部 ext
     if (!ext) {
         ext = seal.ext.new('coc_sorted_output', '某人', '1.0.1');
         seal.ext.register(ext);
         // 一般情况下，默认配置不会害你......
-        seal.ext.registerIntConfig(ext, "制卡上限", 10);
-        seal.ext.registerBoolConfig(ext, "是否使用含运总数总属性排序", true);
+        seal.ext.registerIntConfig(ext, "CSO.制卡上限", 10); // 限制单次生成属性套数，防止滥用
+        seal.ext.registerBoolConfig(ext, "CSO.是否使用含运总数总属性排序", true); // 排序时是否包含幸运值
+        seal.ext.registerBoolConfig(ext, "CSO.是否输出更多属性信息", true); // 是否显示MP和移动力信息
+        console.info("[CSO.load] 载入和注册完毕");
+
+
+        // [AI NOTICE] 这里的设计就是要实现替换现有指令的solve
+        const extcoc = seal.ext.find('coc7');
+        const cmd = extcoc.cmdMap['coc'];
+        console.info("[COS.hijack] 尝试已完成");
+        cmd.solve = (ctx, msg, cmdArgs) => {
+            try {
+                //$#console.info("进入 solve"); // 调试用代码
+                const n = cmdArgs.getArgN(1);
+                //$#console.info("SC1"); // 调试用代码
+                let val = parseInt(n, 10);
+                if (n === '') {
+                    val = 1;
+                }
+                //$#console.info("SC2"); // 调试用代码
+                if (isNaN(val) || val < 1) {
+                    const ret = seal.ext.newCmdExecuteResult(true);
+                    ret.showHelp = true;
+                    return ret;
+                }
+                //$#console.info("SC3"); // 调试用代码
+                const max = seal.ext.getIntConfig(ext, "CSO.制卡上限");
+                if (val > max) {
+                    val = max;
+                }
+
+                //$#console.info("3CBD"); // 调试用代码
+                seal.vars.strSet(ctx, "$t制卡结果文本", "*>*node*<*");
+                //$#console.info("内置变量值替换结果", seal.vars.strGet(ctx, "$t制卡结果文本")); // 调试用代码
+                const textTemplate = seal.formatTmpl(ctx, "COC:制卡");
+                //$#console.info("模板字符串:", textTemplate); // 调试用代码
+                const text = formatStats(
+                    generate(
+                        val,
+                        seal.ext.getBoolConfig(ext, "CSO.是否使用含运总数总属性排序")
+                    ),
+                    seal.formatTmpl(ctx, "COC:制卡_分隔符")
+                )
+                let result = textTemplate.replaceAll("*>*node*<*", text);
+
+                seal.replyToSender(ctx, msg, result);
+
+                return seal.ext.newCmdExecuteResult(true);
+            } catch (error) {
+                console.error("[CSO.solve] 发生致命错误:", error);
+                seal.replyToSender(ctx, msg, "[CSO.solve] 发生致命错误: <错误信息已隐藏 请查看控制台日志>")
+            }
+        };
     }
 }
-
-// [NOTICE] 这里就是要实现替换现有指令的solve
-const extcoc = seal.ext.find('coc7');
-const cmd = extcoc.cmdMap['coc'];
-cmd.solve = (ctx, msg, cmdArgs) => {
-    const n = cmdArgs.getArgN(1);
-    let val = parseInt(n, 10);
-    if (n === '') {
-        val = 1;
-    }
-    if (isNaN(val) || val < 1) {
-        const ret = seal.ext.newCmdExecuteResult(true);
-        ret.showHelp = true;
-        return ret;
-    }
-
-    const max = seal.ext.getIntConfig(ext, "制卡上限");
-    if (val > max) {
-        val = max;
-    }
-
-    seal.vars.strSet(ctx, "$t制卡结果文本", "*>*node*<*");
-    const textTemplate = seal.formatTmpl(ctx, "COC:制卡");
-    const text = formatStats(
-        generate(
-            val,
-            seal.ext.getBoolConfig(ext, "是否使用含运总数总属性排序")
-        ),
-        seal.formatTmpl(ctx, "COC:制卡_分隔符")
-    )
-    let result = textTemplate.replaceAll("*>*node*<*", text);
-
-    seal.replyToSender(ctx, msg, result);
-
-    return seal.ext.newCmdExecuteResult(true);
-};
 
 if (mount2global) {
     globalThis.statsGenerator = generate;
