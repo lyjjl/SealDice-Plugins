@@ -12,7 +12,7 @@
 # 切勿轻信鄙人写的屎山
 
 **屎山代码认证**
-[![代码评级：反人类级灾难性屎山💩](https://img.shields.io/static/v1?label=代码评级&message=反人类级灾难性屎山💩&color=7B5804&style=flat-square&logo=speedtest)](https://github.com/lyjjl/SealDice-Plugins)
+[![代码评级：反人类级灾难性屎山💩](https://img.shields.io/static/v1?label=代码评级&message=反人类级灾难性屎山💩&color=7B5804&style=flat&logo=speedtest)](https://github.com/lyjjl/SealDice-Plugins)
 
 👇以下是插件列表👇
 
