@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         js
-// @author       请尊重原作者SzzRain 某人只是略微修改
+// @author       原作者SzzRain 某人修改
 // @version      1.0.4
-// @description  使用.js <code>执行代码 ; 使用.jsvar <set|get|has|delete|clear> <key> [value] 处理插件变量，仅master可用。不传入value会删除传入的key。允许code中通过globalThis._jsvar.<Method>([ <key> [, value] ])调用。
+// @description  [不了解功能者请勿使用本插件！！！] 使用.js <code>执行代码 ; 使用.jsvar <set|get|has|delete|clear> <key> [value] 处理插件变量，仅master可用。不传入value会删除传入的key。允许code中通过globalThis._jsvar.<Method>([ <key> [, value] ])调用。
 // @timestamp    1752847455
 // @license      MIT
 // @homepageURL  https://github.com/Szzrain
@@ -10,6 +10,9 @@
 
 if (!seal.ext.find('js')) {
     const ext = seal.ext.new('js', 'SzzRain', '1.0.4');
+
+    seal.registerStringConfig(ext, "白名单群组", "QQ-Group:12345678", "白名单群组中无需 Master 权限即可使用命令，请谨慎设置");
+    
 
     // 用于存储插件内部变量的Map
     const pluginVars = new Map();
@@ -79,7 +82,9 @@ if (!seal.ext.find('js')) {
             return ret;
         }
 
-        if (ctx.privilegeLevel === 100) {
+        let witeGroup = seal.ext.getStringConfig(ext, "白名单群组");
+
+        if (ctx.privilegeLevel === 100 || ctx.group.groupId == witeGroup) {
             const codeToExecute = cmdArgs.eatPrefixWith("")[0];
             try {
                 const result = eval(codeToExecute);
@@ -248,4 +253,5 @@ if (!seal.ext.find('js')) {
             return; // 处理完后退出
         }
     };
+    
 }
