@@ -151,6 +151,7 @@ const generate = (n, isIncludeLuck) => {
     };
 
     const allStats = [];
+    const isBackward = seal.ext.getBoolConfig(ext, "CSO.使用逆序输出");
 
     for (let i = 0; i < n; i++) {
         allStats.push(generateStats());
@@ -158,9 +159,17 @@ const generate = (n, isIncludeLuck) => {
     if (DEBUG) console.info("No sort:", JSON.stringify(allStats)); // 调试用代码
 
     if (isIncludeLuck) {
-        allStats.sort((a, b) => b.totalWithLuck - a.totalWithLuck);
+        if (isBackward) {
+            allStats.sort((a, b) => b.totalWithLuck - a.totalWithLuck);
+        } else {
+            allStats.sort((a, b) => a.totalWithLuck - b.totalWithLuck);
+        }
     } else {
-        allStats.sort((a, b) => b.total - a.total);
+        if (isBackward) {
+            allStats.sort((a, b) => b.total - a.total);
+        } else {
+            allStats.sort((a, b) => a.total - b.total);
+        }
     }
 
     if (DEBUG) console.info("sorted:", JSON.stringify(allStats)); // 调试用代码
@@ -189,12 +198,10 @@ const formatStats = (statsArray, separator) => {
         const showRatio = seal.ext.getBoolConfig(ext, "CSO.是否显示不含运总属性和含运总属性的比值");
 
         return (
-            `力量:${stats.str} 敏捷:${stats.dex} 意志:${stats.pow}\n` +
-            `体质:${stats.con} 外貌:${stats.app} 教育:${stats.edu}\n` +
-            `体型:${stats.siz} 智力:${stats.int} 幸运:${stats.luck}\n` +
-            `HP:${stats.hp}` +
-            `${showMoreInfo ? ` MP:${stats.mp} 移动:${stats.mov} 体格:${stats.phy}\n` : ''}` +
-            `<DB:${stats.db}> [${stats.total}/${stats.totalWithLuck}]` +
+            `力量:${stats.str} 敏捷:${stats.dex} 意志:${stats.pow} 体质:${stats.con}\n` +
+            `外貌:${stats.app} 教育:${stats.edu} 体型:${stats.siz} 智力:${stats.int}\n` +
+            `幸运:${stats.luck} ${showMoreInfo ? `移动:${stats.mov}  体格:${stats.phy} MP:${stats.mp}` : ''}HP:${stats.hp}\n` +
+            `${showMoreInfo ? `` : ``} <DB:${stats.db}> [${stats.total}/${stats.totalWithLuck}]` +
             `${showRatio ? ` ${stats.ratio}` : ''}`
         )
     };
@@ -220,10 +227,11 @@ if (badExt != null && !BYPASS_C_CHECK) {
         ext = seal.ext.new('coc_sorted_output', '某人', '1.0.4');
         seal.ext.register(ext);
         // 一般情况下，默认配置不会害你......
-        seal.ext.registerIntConfig(ext, "CSO.制卡上限", 10); // 限制单次生成属性套数，防止滥用
-        seal.ext.registerBoolConfig(ext, "CSO.是否使用含运总数总属性排序", true); // 排序时是否包含幸运值
-        seal.ext.registerBoolConfig(ext, "CSO.是否输出更多属性信息", true); // 是否显示MP和移动力信息
-        seal.ext.registerBoolConfig(ext, "CSO.是否显示不含运总属性和含运总属性的比值", true); // 字面意思
+        seal.ext.registerIntConfig(ext, "CSO.制卡上限", 10, "限制单次生成属性套数，防止滥用");
+        seal.ext.registerBoolConfig(ext, "CSO.是否使用含运总数总属性排序", true, "排序时是否包含幸运值");
+        seal.ext.registerBoolConfig(ext, "CSO.是否输出更多属性信息", true, "是否显示MP和移动力信息");
+        seal.ext.registerBoolConfig(ext, "CSO.是否显示不含运总属性和含运总属性的比值", true, "字面意思");
+        seal.ext.registerBoolConfig(ext, "CSO.使用逆序输出", true, "逆序输出从大到小，正序输出从小到大");
         console.info("[CSO.load] 载入和注册完毕");
 
 
