@@ -30,11 +30,11 @@ const BYPASS_C_CHECK = false;
 const MOUNT_2_GLOBAL = false;
 
 // 如果需要开启DEBUG模式，请把下面代码改成 const DEBUG = true;
-const DEBUG = false;
+const DEBUG = true;
 
 /*
 版本变更日志：
-1.0.4 - 规范化命名，提高替换安全性，输出格式微调
+1.0.4 - 规范化命名，提高替换安全性，输出格式微调，默认配置更改
 1.0.3 - 添加可选的 显示不含运总属性和含运总属性的比值
 1.0.2 - 添加体格(PHY)属性计算和输出，增加DEBUG模式，优化错误处理
 1.0.1 - 修复ext变量作用域问题
@@ -47,6 +47,91 @@ const DEBUG = false;
 let ext = null;
 
 const doHijack = true;
+
+// const CONFIG_VERSION = 1.1;
+
+let showCVWarn = false; // 提示配置版本问题
+
+// 乱七八糟的随机数算法
+/*
+function fnv1a_32bit(str) { // FNV_1A 哈希算法 | 未启用
+    const FNV_OFFSET_BASIS = 2166136261;
+    const FNV_PRIME = 16777619;
+    let hash = FNV_OFFSET_BASIS;
+
+    for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i);
+        hash *= FNV_PRIME;
+    }
+
+    return hash >>> 0;
+}
+function fnv1aRandom(dateStr, userId, min, max) {
+    const inputStr = `${dateStr}_${userId}`;
+
+    const hashValue = fnv1a_32bit(inputStr);
+
+    const range = max - min + 1;
+    const result = (hashValue % range) + min;
+
+    return result;
+}
+    */
+// 下面没有乱七八糟的随机算法了
+
+/**
+ * 从 random.org 获取随机整数   暂不启用
+ * @param {number} n - 生成随机数的个数
+ * @param {number} min - 随机数范围的最小值
+ * @param {number} max - 随机数范围的最大值
+ * @returns {Promise<number[]>} - 包含随机数的 Promise
+ */
+async function getRandomNumbers(n, min, max) {
+    const apiKey = seal.ext.getStringConfig(ext, "CSO.API_Key(random.org)")
+
+    const url = "https://api.random.org/json-rpc/2/invoke";
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    const requestBody = {
+        "jsonrpc": "2.0",
+        "method": "generateIntegers",
+        "params": {
+            "apiKey": apiKey,
+            "n": n,
+            "min": min,
+            "max": max,
+            "replacement": true
+        },
+        "id": 1
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`[CSO.request] HTTP 错误！状态码: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(`[CSO.request] API 错误: ${data.error.message}`);
+        }
+
+        return data.result.random.data;
+
+    } catch (error) {
+        console.error("[CSO.request] 获取随机数时出错:", error);
+        throw error;
+    }
+}
+
 
 /**
  * @description 生成 N 套属性并根据总值进行排序
@@ -151,6 +236,7 @@ const generate = (n, isIncludeLuck) => {
     };
 
     const allStats = [];
+    const isBackward = seal.ext.getBoolConfig(ext, "CSO.结果逆序输出");
 
     for (let i = 0; i < n; i++) {
         allStats.push(generateStats());
@@ -158,12 +244,17 @@ const generate = (n, isIncludeLuck) => {
     if (DEBUG) console.info("No sort:", JSON.stringify(allStats)); // 调试用代码
 
     if (isIncludeLuck) {
-        allStats.sort((a, b) => b.totalWithLuck - a.totalWithLuck);
+        allStats.sort((a, b) => isBackward
+            ? a.totalWithLuck - b.totalWithLuck
+            : b.totalWithLuck - a.totalWithLuck);
     } else {
-        allStats.sort((a, b) => b.total - a.total);
+        allStats.sort((a, b) => isBackward
+            ? a.total - b.total
+            : b.total - a.total);
     }
 
     if (DEBUG) console.info("sorted:", JSON.stringify(allStats)); // 调试用代码
+
     return allStats;
 };
 
@@ -175,7 +266,7 @@ const generate = (n, isIncludeLuck) => {
  */
 const formatStats = (statsArray, separator) => {
     if (!statsArray || statsArray.length === 0) {
-        console.error("[CSO.formatStats] 人物卡数组错误 (undefined/none)")
+        console.error("[CSO.formatStats] 人物卡数组错误 (undefined/none)");
         return null;
     }
 
@@ -198,11 +289,40 @@ const formatStats = (statsArray, separator) => {
             `${showRatio ? ` ${stats.ratio}` : ''}`
         )
     };
+    if (DEBUG) console.log("疑错检查点1");
+    try {
+        const separateThreshold = seal.ext.getIntConfig(ext, "CSO.最大值单独输出阈值");
+        const isBackward = seal.ext.getBoolConfig(ext, "CSO.结果逆序输出");
 
-    // 遍历
-    const formattedStrings = statsArray.map(formatSingleStat);
+        let separateStat = null;
+        let statsToMap = statsArray;
 
-    return formattedStrings.join(separator);
+        if (statsArray.length > separateThreshold && statsArray.length > 1) {
+            if (isBackward) {
+                separateStat = statsArray[0];
+                statsToMap = statsArray.slice(1);
+            } else {
+                separateStat = statsArray[statsArray.length - 1];
+                statsToMap = statsArray.slice(0, -1);
+            }
+        }
+
+        // 遍历
+        const formattedStrings = statsToMap.map(formatSingleStat);
+
+        let result = formattedStrings.join(separator);
+        console.log("result:", result);
+        if (separateStat) {
+            console.log("result.preadd:", result, "SS:", separateStat);
+            result += `\f\f The Best: \n${formatSingleStat(separateStat)}`;
+            console.log("result.added:", result);
+        }
+        console.log("result.finish:", result);
+        return result;
+    } catch (error) {
+        console.error("组合遇到致命错误:", error);
+        return null;
+    }
 };
 
 let badExt = seal.ext.find('coc_forward_msg');
@@ -219,45 +339,72 @@ if (badExt != null && !BYPASS_C_CHECK) {
     if (!ext) {
         ext = seal.ext.new('coc_sorted_output', '某人', '1.0.4');
         seal.ext.register(ext);
+
+        /*
+        if (seal.ext.getOptionConfig(ext, "CSO.configVersion") != String(CONFIG_VERSION)) {
+            for (let i = 5; i--;) console.warn("[CSO.load] 你使用的配置文件版本不是最新版，请立即点击“小刷子”图标重置配置文件。旧版配置文件可能导致未知的不良反应！");
+            showCVWarn = true;
+            seal.ext.registerOptionConfig(ext, "CSO.configVersion", "1.1", ["1.1"]); // 用于标记配置版本，不可更改
+        }
+            */
+
         // 一般情况下，默认配置不会害你......
-        seal.ext.registerIntConfig(ext, "CSO.制卡上限", 10); // 限制单次生成属性套数，防止滥用
-        seal.ext.registerBoolConfig(ext, "CSO.是否使用含运总数总属性排序", true); // 排序时是否包含幸运值
-        seal.ext.registerBoolConfig(ext, "CSO.是否输出更多属性信息", true); // 是否显示MP和移动力信息
-        seal.ext.registerBoolConfig(ext, "CSO.是否显示不含运总属性和含运总属性的比值", true); // 字面意思
+        // | 后面加 Done 代表已完成 | 后面加 Test 表示未经测试 | 后面什么也没有是未完成
+        seal.ext.registerIntConfig(ext, "CSO.制卡上限", 10, "限制单次生成属性套数，防止滥用 | Done");
+        seal.ext.registerIntConfig(ext, "CSO.最大值单独输出阈值", 6, "当制卡数量超过阈值时将最大值单独输出，设置为 0 以禁用 | Test");
+        seal.ext.registerBoolConfig(ext, "CSO.使用含运总属性排序", true, "排序时是否包含幸运值 | Done");
+        seal.ext.registerBoolConfig(ext, "CSO.输出更多属性信息", true, "是否显示MP和移动力信息 | Done");
+        seal.ext.registerBoolConfig(ext, "CSO.显示不含运总属性和含运总属性的比值", true, "字面意思 | Done");
+        seal.ext.registerBoolConfig(ext, "CSO.启用更加“灵活”的属性生成", true, "使用 15-90 / 40-90 而不是 3d6*5 / (2d6+6)*5 | ");
+        seal.ext.registerBoolConfig(ext, "CSO.结果逆序输出", true, "为 false 时使用正序(由小到大)输出 | Test");
+
+
+
+        /*
+        seal.ext.registerStringConfig(ext, "CSO.API_Key(random.org)", "留空或保留默认值以禁用从 random.org 获取随机值"); // 留空或保留默认值以禁用从 random.org 获取随机值
+        
+        function isValidUUID(str) {
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            return uuidRegex.test(str);
+        }
+            */
         console.info("[CSO.load] 载入和注册完毕");
 
 
         // [AI NOTICE] 这里的设计就是要实现替换现有指令的solve
         const extcoc = seal.ext.find('coc7');
+        if (DEBUG) console.info("找到 coc7 插件:", JSON.stringify(extcoc));
         const cmd = extcoc.cmdMap['coc'];
+        if (DEBUG) console.info("找到 coc 指令:", JSON.stringify(cmd));
 
         const originalSolve = cmd.solve;
         console.info("[COS.hijack] 原始 solve 已备份");
         console.info("[COS.hijack] 尝试已完成");
         cmd.solve = (ctx, msg, cmdArgs) => {
+            if (DEBUG) console.info("[COS.solve.doHijack] status:", doHijack);
+            if (DEBUG) console.warn("劫持成功！正在执行 CSO 插件的 solve 函数！");
             if (doHijack) {
-                console.info("[COS.solve.doHijack] status", doHijack);
                 try {
                     if (DEBUG) console.info("进入 solve"); // 调试用代码
                     const n = cmdArgs.getArgN(1);
-                    if (DEBUG) console.info("SC1"); // 调试用代码
+                    if (DEBUG) console.info("CheckPoint1"); // 调试用代码
                     let val = parseInt(n, 10);
                     if (n === '') {
                         val = 1;
                     }
-                    if (DEBUG) console.info("SC2"); // 调试用代码
+                    if (DEBUG) console.info("CheckPoint2"); // 调试用代码
                     if (isNaN(val) || val < 1) {
                         const ret = seal.ext.newCmdExecuteResult(true);
                         ret.showHelp = true;
                         return ret;
                     }
-                    if (DEBUG) console.info("SC3"); // 调试用代码
+                    if (DEBUG) console.info("CheckPoint3"); // 调试用代码
                     const max = seal.ext.getIntConfig(ext, "CSO.制卡上限");
                     if (val > max) {
                         val = max;
                     }
 
-                    if (DEBUG) console.info("3CBD"); // 调试用代码
+                    if (DEBUG) console.info("3CheckPass"); // 调试用代码
                     seal.vars.strSet(ctx, "$t制卡结果文本", "*>*node*<*");
                     if (DEBUG) console.info("内置变量值替换结果", seal.vars.strGet(ctx, "$t制卡结果文本")); // 调试用代码
                     const textTemplate = seal.formatTmpl(ctx, "COC:制卡");
@@ -265,7 +412,7 @@ if (badExt != null && !BYPASS_C_CHECK) {
                     const text = formatStats(
                         generate(
                             val,
-                            seal.ext.getBoolConfig(ext, "CSO.是否使用含运总数总属性排序")
+                            seal.ext.getBoolConfig(ext, "CSO.使用含运总属性排序")
                         ),
                         seal.formatTmpl(ctx, "COC:制卡_分隔符")
                     )
@@ -279,10 +426,16 @@ if (badExt != null && !BYPASS_C_CHECK) {
 
                     seal.replyToSender(ctx, msg, result);
 
+                    if (showCVWarn) {
+                        seal.replyToSender(ctx, msg, "[CSO] 你使用的配置文件版本不是最新版，请骰主立即点击“小刷子”图标重置配置文件。旧版配置文件可能导致未知的不良反应！\f如果你不是骰主，请立即使用 .send <内容> 联系骰主！");
+                        showCVWarn = false;
+                    }
+
                     return seal.ext.newCmdExecuteResult(true);
                 } catch (error) {
                     console.error("[CSO.solve] 发生致命错误:", error);
                     seal.replyToSender(ctx, msg, "[CSO.solve] 发生致命错误: <错误信息已隐藏 请查看控制台日志>")
+                    return seal.ext.newCmdExecuteResult(false);
                 }
             } else {
                 console.warn("[COS.solve.doHijack] status:", doHijack);
