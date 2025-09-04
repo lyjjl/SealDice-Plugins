@@ -66,7 +66,7 @@ if (!ext) {
 
     ext = seal.ext.new("消息自动贴表情", "某人", "1.0.0");
     seal.ext.register(ext);
-    seal.ext.registerOptionConfig(ext, "MAEL.分离端类型", "NapCat", ["NapCat", "LLOnebot/LLTwobot", "Lagrange"]);
+    seal.ext.registerOptionConfig(ext, "MAEL.分离端类型", "NapCat", ["NapCat", "LLOnebot/LLTwobot", "Lagrange", "Milky"]);
     seal.ext.registerTemplateConfig(ext, "MAEL.表情ID列表", [128046, 127866, 76]);
     seal.ext.registerTemplateConfig(ext, "MAEL.目标用户列表", ["123456"]);
     seal.ext.registerStringConfig(ext, "MAEL.HTTP服务器url", "http://127.0.0.1:3001");
@@ -113,6 +113,14 @@ if (!ext) {
                             }
                             break;
 
+                        case "Milky":
+                            api_path = "/api/send_group_message_reaction"
+                            requestBody = {
+                                "group_id": msg.groupId.replace(/\D/g, ''),
+                                "message_seq": msg.rawId,
+                                "reaction": face_id,
+                                "is_add": true
+                            }
                         default:
                             console.error("[MAEL] 未知的客户端类型:", QLtype);
                             return;
