@@ -69,7 +69,7 @@ if (!ext) {
     seal.ext.registerOptionConfig(ext, "MAEL.分离端类型", "NapCat", ["NapCat", "LLOnebot/LLTwobot", "Lagrange", "Milky"]);
     seal.ext.registerTemplateConfig(ext, "MAEL.表情ID列表", [128046, 127866, 76]);
     seal.ext.registerTemplateConfig(ext, "MAEL.目标用户列表", ["123456"]);
-    seal.ext.registerStringConfig(ext, "MAEL.HTTP服务器url", "http://127.0.0.1:3001");
+    seal.ext.registerStringConfig(ext, "MAEL.HTTP服务器url", "http://127.0.0.1:3001", "Milky 用户请不要附加 /api 尾缀");
     
 
     ext.onNotCommandReceived = async (ctx, msg) => {
