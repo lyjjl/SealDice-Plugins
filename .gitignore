@@ -3,3 +3,5 @@ sealdice-js-ext-template
 /生活不易/
 *.groovy
 /屎山区/
+.venv
+qr-code.*
