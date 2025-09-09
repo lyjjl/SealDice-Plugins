@@ -6,7 +6,7 @@
 // @timestamp    
 // @sealVersion  1.4.6
 // @license      MIT
-// @homepageURL  https://github.com/
+// @homepageURL  https://github.com/lyjjl
 // ==/UserScript==
 
 let ext = seal.ext.find("消息自动贴表情");
@@ -19,7 +19,7 @@ if (!ext) {
      * @param {object} body - 请求体，将被 JSON.stringify 转换
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null
      */
-    async function apiRequest(baseurl, apipath, body) {
+    async function apiRequest(baseurl, apipath, body, token = null) {
         function T_normalizeURL(url) {
             // 移除重复的斜杠，但保留 :// 部分
             return url.replace(/([^:]\/)\/+/g, "$1");
@@ -27,13 +27,17 @@ if (!ext) {
         let Nurl = T_normalizeURL(baseurl + apipath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
 
         try {
+            let headers = {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
             let response = await fetch(
                 Nurl,
                 {
                     method: "POST",
-                    headers: {
-                        "Content-type": "application/json; charset=UTF-8"
-                    },
+                    headers: headers,
                     body: JSON.stringify(body),
                     cache: "no-cache",
                     credentials: "same-origin",
@@ -69,8 +73,9 @@ if (!ext) {
     seal.ext.registerOptionConfig(ext, "MAEL.分离端类型", "NapCat", ["NapCat", "LLOnebot/LLTwobot", "Lagrange", "Milky"]);
     seal.ext.registerTemplateConfig(ext, "MAEL.表情ID列表", [128046, 127866, 76]);
     seal.ext.registerTemplateConfig(ext, "MAEL.目标用户列表", ["123456"]);
-    seal.ext.registerStringConfig(ext, "MAEL.HTTP服务器url", "http://127.0.0.1:3001", "Milky 用户请不要附加 /api 尾缀");
-    
+    seal.ext.registerStringConfig(ext, "MAEL.HTTP服务器url", "http://127.0.0.1:3001", "Milky 用户要附加 /api 尾缀");
+    seal.ext.registerStringConfig(ext, "MAEL.HTTP服务器token", "", "如果你配置了 Token ，请在这里填写");
+
 
     ext.onNotCommandReceived = async (ctx, msg) => {
 
@@ -81,7 +86,7 @@ if (!ext) {
                 let QLtype = seal.ext.getOptionConfig(ext, "MAEL.分离端类型");
                 let baseurl = seal.ext.getStringConfig(ext, "MAEL.HTTP服务器url");
                 let emojList = seal.ext.getTemplateConfig(ext, "MAEL.表情ID列表");
-
+                let token = seal.ext.getStringConfig(ext, "MAEL.HTTP服务器token");
 
                 for (let face_id of emojList) {
                     let api_path, requestBody;
@@ -114,13 +119,15 @@ if (!ext) {
                             break;
 
                         case "Milky":
-                            api_path = "/api/send_group_message_reaction"
+                            api_path = "/send_group_message_reaction"
                             requestBody = {
                                 "group_id": msg.groupId.replace(/\D/g, ''),
                                 "message_seq": msg.rawId,
                                 "reaction": face_id,
                                 "is_add": true
                             }
+                            break;
+                        
                         default:
                             console.error("[MAEL] 未知的客户端类型:", QLtype);
                             return;
@@ -129,7 +136,8 @@ if (!ext) {
                     let response = await apiRequest(
                         baseurl,
                         api_path,
-                        requestBody
+                        requestBody,
+                        token
                     )
                     if (!response) {
                         console.warn(`[MAEL] 表情 ${face_id} 设置失败`);
