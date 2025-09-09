@@ -1,0 +1,275 @@
+// data.attrs.data
+// 默认
+{
+    "t": 7,
+    "v": {
+        "dict": {}
+    }
+}
+// 录了个卡
+{
+    "t": 7,
+    "v": {
+        "dict": {
+            "幸运": {
+                "t": 0,
+                "v": 50
+            },
+            "理智": {
+                "t": 0,
+                "v": 81
+            },
+            "生命值": {
+                "t": 0,
+                "v": 9
+            },
+            "闪避": {
+                "t": 0,
+                "v": 55
+            },
+            "神秘学": {
+                "t": 0,
+                "v": 55
+            },
+            "心理学": {
+                "t": 0,
+                "v": 90
+            },
+            "外貌": {
+                "t": 0,
+                "v": 41
+            },
+            "敏捷": {
+                "t": 0,
+                "v": 56
+            },
+            "教育": {
+                "t": 0,
+                "v": 70
+            },
+            "话术": {
+                "t": 0,
+                "v": 85
+            },
+            "体型": {
+                "t": 0,
+                "v": 41
+            },
+            "力量": {
+                "t": 0,
+                "v": 50
+            },
+            "聆听": {
+                "t": 0,
+                "v": 80
+            },
+            "信用评级": {
+                "t": 0,
+                "v": 20
+            },
+            "魔法值": {
+                "t": 0,
+                "v": 16
+            },
+            "智力": {
+                "t": 0,
+                "v": 81
+            },
+            "意志": {
+                "t": 0,
+                "v": 81
+            },
+            "斗殴": {
+                "t": 0,
+                "v": 40
+            },
+            "图书馆使用": {
+                "t": 0,
+                "v": 70
+            },
+            "体质": {
+                "t": 0,
+                "v": 50
+            },
+            "侦查": {
+                "t": 0,
+                "v": 85
+            }
+        }
+    }
+}
+// 娱乐变量
+{
+    "t": 7,
+    "v": {
+        "dict": {
+            "$m占卜内容": {
+                "t": 2,
+                "v": "我是占卜内容"
+            },
+            "$m人品日期": {
+                "t": 0,
+                "v": 20250101
+            }
+        }
+    }
+}
+// data.ban_info.data
+{
+    "ID": "UI-Group:1919810",
+    "name": "%未知群名%",
+    "score": 200,
+    "rank": -30,
+    "times": [
+        1757426954
+    ],
+    "reasons": [
+        "kill"
+    ],
+    "places": [
+        "骰主指令"
+    ],
+    "banTime": 1757426954
+}
+// data.group_info.data
+{
+    "active": true,
+    "activatedExtList": [
+        {
+            "name": "coc7",
+            "aliases": null,
+            "version": "1.0.0"
+        },
+        {
+            "name": "story",
+            "aliases": null,
+            "version": "1.0.1"
+        },
+        {
+            "name": "log",
+            "aliases": null,
+            "version": "1.0.1"
+        },
+        {
+            "name": "fun",
+            "aliases": null,
+            "version": "1.1.0"
+        },
+        {
+            "name": "deck",
+            "aliases": null,
+            "version": "1.0.0"
+        },
+        {
+            "name": "reply",
+            "aliases": null,
+            "version": "1.2.0"
+        },
+        {
+            "name": "dnd5e",
+            "aliases": null,
+            "version": "1.0.0"
+        }
+    ],
+    "groupId": "UI-Group:2101",
+    "guildId": "",
+    "channelId": "",
+    "groupName": "",
+    "diceIdActiveMap": {
+        "UI:1000": true
+    },
+    "diceIdExistsMap": {},
+    "botList": {},
+    "diceSideNum": 0,
+    "diceSideExpr": "",
+    "system": "coc7",
+    "helpPackages": null,
+    "cocRuleIndex": 0,
+    "logCurName": "",
+    "logOn": false,
+    "recentDiceSendTime": 0,
+    "showGroupWelcome": false,
+    "groupWelcomeMessage": "",
+    "enteredTime": 0,
+    "inviteUserId": "",
+    "tmpPlayerNum": 0,
+    "tmpExtList": null,
+    "defaultHelpGroup": ""
+}
+// data-logs.db
+// data-logs.log_items.command_info
+{
+    "cmd": "st",
+    "items": [
+        {
+            "attr": "生命值",
+            "isInc": true,
+            "modExpr": "3",
+            "op": "+",
+            "type": "mod",
+            "valNew": {
+                "t": 0,
+                "v": 10
+            },
+            "valOld": {
+                "t": 0,
+                "v": 7
+            }
+        }
+    ],
+    "pcName": "某人",
+    "rule": "coc7"
+}
+{
+    "cmd": "sc",
+    "cocRule": 0,
+    "items": [
+        {
+            "exprs": [
+                "d100",
+                "1d6",
+                "d20"
+            ],
+            "outcome": 88,
+            "rank": -1,
+            "sanNew": 69,
+            "sanOld": 78
+        }
+    ],
+    "pcName": "某人",
+    "rule": "coc7"
+}
+{
+    "cmd": "roll",
+    "items": [
+        {
+            "expr": "d6+d10",
+            "result": 6
+        }
+    ],
+    "pcName": "某人"
+}
+{
+    "cmd": "ra",
+    "cocRule": 3,
+    "items": [
+        {
+            "attrVal": 750,
+            "checkVal": 750,
+            "expr1": "D100",
+            "expr2": "750",
+            "outcome": 52,
+            "rank": 3
+        },
+        {
+            "attrVal": 750,
+            "checkVal": 750,
+            "expr1": "D100",
+            "expr2": "750",
+            "outcome": 64,
+            "rank": 3
+        }
+    ],
+    "pcName": "某人hp500/500 mp750/750", // 这里为什么会多个0......
+    "rule": "coc7"
+}
