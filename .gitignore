@@ -6,3 +6,5 @@ sealdice-js-ext-template
 .venv
 qr-code.*
 /test/
+/data/
+*.db
