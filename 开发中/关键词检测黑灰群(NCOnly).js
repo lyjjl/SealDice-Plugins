@@ -165,9 +165,7 @@ if (!ext) {
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null。
      */
     async function A_request_N(baseurl, apipath, body) { //这里的 A 代表使用 API 完成，后缀 N 代表适用于 NapCat
-        // 移除 apipath 前置的所有斜杠，避免拼接时出现多余的斜杠
-        let cleanApiPath = apipath.replace(/^\/+/, '');
-        let Nurl = T_normalizeURL(baseurl + cleanApiPath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
+        let Nurl = T_normalizeURL(baseurl + apipath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
 
         try {
             let response = await fetch(Nurl, {

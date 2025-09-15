@@ -57,7 +57,7 @@ if (!ext) {
             // 如果状态码是 2xx，尝试解析 JSON
             response_data = await response.json();
 
-            console.info("[MAEL.request] HTTP 请求成功：", apipath);
+            // console.info("[MAEL.request] HTTP 请求成功：", apipath);
             // console.info(JSON.stringify(response_data)); // 为了控制台输出更清晰，再次序列化  这里在正式使用时要注释  log 出来一堆不太好（）
             return response_data;
 
