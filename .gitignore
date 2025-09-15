@@ -5,6 +5,8 @@ sealdice-js-ext-template
 /屎山区/
 .venv
 qr-code.*
-/test/
-/data/
+*/test/
+*/data/
 *.db
+*/郊狼-py后端-海豹插件-QQ/
+
