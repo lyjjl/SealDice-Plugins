@@ -78,7 +78,7 @@ if (!ext) {
     async function checkGroupName(ctx, msg) {
         try {
             // 调用 NC API 获取群组列表
-            const response = await A_request_N(url, '/get_group_list');
+            const response = await apiRequest(url, '/get_group_list');
             const blackword = seal.ext.getStringConfig(ext, "C_wordlist");
 
 
@@ -164,7 +164,7 @@ if (!ext) {
      * @param {object} body - 请求体，将被 JSON.stringify 转换。
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null。
      */
-    async function A_request_N(baseurl, apipath, body) { //这里的 A 代表使用 API 完成，后缀 N 代表适用于 NapCat
+    async function apiRequest(baseurl, apipath, body) {
         let Nurl = T_normalizeURL(baseurl + apipath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
 
         try {
@@ -183,23 +183,21 @@ if (!ext) {
 
             let response_data;
 
-            // 先检查响应状态，再决定如何解析响应体
+            // 先检查响应状态
             if (!response.ok) {
-                // 如果 HTTP 请求失败 (状态码不是 2xx)，则尝试读取文本内容作为错误信息
+                // HTTP 请求失败
                 response_data = await response.text();
                 console.error(`HTTP 请求失败，状态码：${response.status}`, response_data);
                 return null;
             }
 
-            // 如果 HTTP 请求成功 (状态码是 2xx)，则尝试解析 JSON
+            // HTTP 请求成功
             response_data = await response.json();
 
             console.info("HTTP 请求成功：", apipath);
-            // console.info(JSON.stringify(response_data)); // 为了控制台输出更清晰，再次序列化  这里在正式使用时要注释  log 出来一堆不太好（）
             return response_data;
 
         } catch (error) {
-            // 捕获所有其他可能的错误，例如网络问题或 JSON 解析异常
             console.error('HTTP 请求失败', error, " API: ", apipath);
             return null;
         }
@@ -378,7 +376,7 @@ if (!ext) {
             for (let i = 0; i < C_qq_length; i++) {
                 // 某：这个缩进有点怪异，嗯
                 // 某：在for循环里面调用异步API请求函数要写await关键字，不然会导致性能问题和[object Promise]
-                await A_request_N(url, "/send_private_msg", {
+                await apiRequest(url, "/send_private_msg", {
                     "user_id": C_qq[i],
                     "message": [{
                         "type": "text",
@@ -394,7 +392,7 @@ if (!ext) {
         console.log("步过私聊发送消息")
         try {
             for (let i = 0; i < C_QQ_Group_length; i++) {
-                await A_request_N(url, "/send_group_msg", {
+                await apiRequest(url, "/send_group_msg", {
                     "group_id": C_qq_Group[i],
                     "message": [{
                         "type": "text",
@@ -491,14 +489,14 @@ if (!ext) {
         // return ANOList;
     }
 
-    //测试用函数。为了避免 [object Promise]，需要整一个 async 函数，然后在里面中 await A_request_N()
+    //测试用函数。为了避免 [object Promise]，需要整一个 async 函数，然后在里面中 await apiRequest()
     /**
      * 测试
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null。
      */
     async function testApiCall(group_id) {
         console.info("正在发起 API 请求...");
-        const result = await A_request_N(url, "/get_group_member_list", {
+        const result = await apiRequest(url, "/get_group_member_list", {
             "group_id": group_id
         }); // 这里可以作为示例调用，或许 apipath 可以改为从参数传入。算了，反正是测试用的
         return result;
@@ -510,14 +508,14 @@ if (!ext) {
     /*
     async function testApiCall(group_id) {
       console.info("正在发起 API 请求...");
-      const result = await A_request_N(url, "/get_group_member_list", {"group_id": group_id});  // 这里可以作为示例调用，或许 apipath 可以改为从参数传入。算了，反正是测试用的
+      const result = await apiRequest(url, "/get_group_member_list", {"group_id": group_id});  // 这里可以作为示例调用，或许 apipath 可以改为从参数传入。算了，反正是测试用的
       // await getGroupANO(result);
       return result;
     }
 */
     async function testApiCall_get_group_msg_history(group_id) {
         console.info("正在发起 API 请求 [GGMH]...");
-        const result = await A_request_N(url, "/get_group_msg_history", {
+        const result = await apiRequest(url, "/get_group_msg_history", {
             "group_id": group_id,
             "message_seq": 0,
             "count": 1,
@@ -574,7 +572,7 @@ if (!ext) {
 
             try {
                 console.log(`准备向群 ${groupId} 发送合并转发消息...`);
-                const response = await A_request_N(baseurl, "/send_group_forward_msg", body);
+                const response = await apiRequest(baseurl, "/send_group_forward_msg", body);
 
                 if (response && response.retcode === 0) {
                     console.log(`成功向群 ${groupId} 发送消息，message_id: ${response.data.message_id}`);
@@ -651,7 +649,7 @@ if (!ext) {
 
 
         try {
-            const apiResponse = await A_request_N(url, apiName, jsonRequestBody);
+            const apiResponse = await apiRequest(url, apiName, jsonRequestBody);
 
             const reply = JSON.stringify(apiResponse, null, 2);
             seal.replyToSender(ctx, msg, `API 调用成功，响应：\n${reply}`);
@@ -673,7 +671,7 @@ if (!ext) {
     cmdLeave.solve = async (ctx, msg, cmdArgs) => {
         // TODO: 指令的具体逻辑
         let group_id = cmdArgs.getArgN(1);
-        await A_request_N(url, "/set_group_leave",
+        await apiRequest(url, "/set_group_leave",
             {
                 "group_id": group_id,
                 "is_dismiss": false
@@ -699,7 +697,7 @@ if (!ext) {
         let reply = "群号：" + cmdArgs.getArgN(1) + " 数量：" + count;
 
         seal.replyToSender(ctx, msg, reply);
-        let result = await A_request_N(
+        let result = await apiRequest(
             url,
             "/get_group_msg_history",
             {
