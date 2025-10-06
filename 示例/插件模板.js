@@ -4,7 +4,6 @@
 // @version      1.0.0
 // @description  
 // @timestamp    
-// 
 // @license      MIT
 // @homepageURL  https://github.com/
 // ==/UserScript==
@@ -16,7 +15,8 @@
 let ext = seal.ext.find('');
 if (!ext) {
     ext = seal.ext.new('', '', '1.0.0');
-
+    seal.ext.register(ext);
+    
     const cmdE = seal.ext.newCmdItemInfo();
     cmdE.name = '';
     cmdE.help = '';
@@ -29,5 +29,5 @@ if (!ext) {
     // 将命令注册到扩展中
     ext.cmdMap[''] = cmdE;
 
-    seal.ext.register(ext);
+    
 }
