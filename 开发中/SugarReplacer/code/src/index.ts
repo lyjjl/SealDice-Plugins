@@ -1,5 +1,6 @@
 import { sample } from "lodash-es";
 import { nameList } from "./utils.js";
+import { webSocketManager } from "./wsManager.js";
 
 function main() {
     // 注册扩展
@@ -16,10 +17,22 @@ function main() {
 
     console.log("[SugarReplacer] Loading");
 
-    let m2f = new WebSocket(seal.ext.getStringConfig(ext, "LoginF_WSServer"));
-    let m2s = new WebSocket(seal.ext.getStringConfig(ext, "Seal_WSServer"));
+    // let m2f = new WebSocket(seal.ext.getStringConfig(ext, "LoginF_WSServer"));
+    // let m2s = new WebSocket(seal.ext.getStringConfig(ext, "Seal_WSServer"));
 
-    m2f.addEventListener("ConnectionChecker", (event) => {})
+    const wsManager = new webSocketManager(
+        seal.ext.getStringConfig(ext, "Seal_WSServer"),
+        seal.ext.getStringConfig(ext, "LoginF_WSServer"),
+        {
+            maxRetries: 5,
+            retryDelay: 1000,
+            connectionTimeout: 5000
+        }
+    );
+
+    wsManager.onBothConnected = () => {
+        console.log("[SugarReplacer] Both WebSocket servers connected.");
+    }
 
     const cmdSeal = seal.ext.newCmdItemInfo();
     cmdSeal.name = 'seal';
