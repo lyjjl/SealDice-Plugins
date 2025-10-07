@@ -141,6 +141,7 @@ if (!ext) {
 
 
     ext.onNotCommandReceived = (ctx, msg) => {
+        try {
         if (msg.message.replace(/\s/g, '').match(/^草群友\[CQ:at,qq=(\d+)\]$/)) {
 
             const userId = msg.sender.userId.replace(/\D/g, '');
@@ -199,7 +200,7 @@ if (!ext) {
 
                     // 数值记录
                     // - 攻
-                    tmpUser.fuckTime_last_total = Date.now();
+                    tmpUser.fuckTime_last_today = Date.now();
                     tmpUser.fuckCount_total += 1;
                     tmpUser.fuckCount_today += 1;
                     tmpUser.fuckDuration_total += fuckDuration;
@@ -244,6 +245,9 @@ if (!ext) {
                     seal.replyToSender(ctx, msg, reply);
                 }
             }
+        }
+        } catch(e) {
+            console.error("[FGM]", e.message);
         }
     }
 
