@@ -6,6 +6,7 @@
 // @timestamp    0
 // @license      MIT
 // @homepageURL  https://github.com/
+// @updateurl    https://ghfast.top/https://github.com/lyjjl/SealDice-Plugins/blob/main/%E5%BC%80%E5%8F%91%E4%B8%AD/%E8%8D%89%E7%BE%A4%E5%8F%8B.js
 // ==/UserScript==
 
 // FAQ:
@@ -254,7 +255,10 @@ if (!ext) {
         cmdFGM.help = `=== 草群友 (拓展) ===\n此处为草群友的拓展命令\n`;
 
         cmdFGM.solve = (ctx, msg, cmdArgs) => {
-            // TODO: 指令的具体逻辑
+            switch (cmdArgs.getArgN(1)){
+                case '手冲':
+                    seal.replyToSender(ctx, msg, )
+            }
         };
 
         // 将命令注册到扩展中
