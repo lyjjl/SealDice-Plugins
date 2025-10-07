@@ -230,7 +230,7 @@ if (!ext) {
                                 tmpTargetUser.semenIn_today += extraEjaculateVolume;
 
                             } else {
-                                reply += `你用你 ${getDescription(lengthStage, tmpUser.dick_length)}的牛子草了 [CQ:at,qq=${targetUserId}] ${fuckDuration}分钟，注入了 ${semenVolume}ml 浓郁的生命精华`;
+                                reply += `你用你 ${getDescription(lengthStage, tmpUser.dick_length)} 牛子草了 [CQ:at,qq=${targetUserId}] ${fuckDuration}分钟，注入了 ${semenVolume}ml 浓郁的生命精华`;
                                 if (tmpTargetUser.beFuckedCount_today === 1) reply += `\n😋你拿下了 [CQ:at,qq=${targetUserId}] 今日一血！`;
                             }
                             reply += `\n[CQ:image,url=http://q.qlogo.cn/headimg_dl?dst_uin=${targetUserId}&spec=640&img_type=jpg,c=3]`;
