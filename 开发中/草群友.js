@@ -238,6 +238,7 @@ if (!ext) {
                     }
                     reply += `\n[CQ:image,url=http://q.qlogo.cn/headimg_dl?dst_uin=${targetUserId}&spec=640&img_type=jpg,c=3]`;
                     reply += `\n她的体内充盈着 ${tmpTargetUser.semenIn_today}ml 浓郁的生命精华，小腹${getDescription(abdomenStage, tmpTargetUser.semenIn_today)}!`
+                    reply += `\n今天你已经草了 ${tmpUser.fuckCount_today} 次群友啦！`
                     if (tmpTargetUser.isComa) reply += `\n由于群友的过度操弄，[CQ:at,qq=${targetUserId}] 已经被草昏了！面对被草昏的群友，你的选择是......`
 
                     seal.replyToSender(ctx, msg, reply);
