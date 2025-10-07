@@ -187,7 +187,7 @@ if (!ext) {
                 mergeUserData(fuckStorage, targetUserId, defaultBeFuckedStorage);
             };
 
-            if (Date.now() - fuckStorage[userId].fuckTime_last_total >= fuckLimit.cooldown) { // 贤者时间检查
+            if (Date.now() - fuckStorage[userId].fuckTime_last_total < fuckLimit.cooldown) { // 贤者时间检查
                 seal.replyToSender(ctx, msg, fuckNotice.cooldown);
             } else {
                 if (fuckStorage[userId].fuckCount_today >= fuckLimit.maxFuckCount_today) { // 今日草群友次数检查
