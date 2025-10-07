@@ -232,6 +232,7 @@ if (!ext) {
                         
                         tmpTargetUser.semenIn_total += extraEjaculateVolume;
                         tmpTargetUser.semenIn_today += extraEjaculateVolume;
+
                     } else {
                         reply += `你用你 ${getDescription(lengthStage, tmpUser.dick_length)}的牛子草了 [CQ:at,qq=${targetUserId}] ${fuckDuration}分钟，注入了 ${semenVolume}ml 浓郁的生命精华`;
                         if (tmpTargetUser.beFuckedCount_today === 1) reply += `\n😋你拿下了 [CQ:at,qq=${targetUserId}] 今日一血！`;
@@ -242,6 +243,7 @@ if (!ext) {
                     reply += `\n今天你已经草了 ${tmpUser.fuckCount_today} 次群友啦！`
                     if (tmpTargetUser.isComa) reply += `\n由于群友的过度操弄，[CQ:at,qq=${targetUserId}] 已经被草昏了！面对被草昏的群友，你的选择是......`
 
+                    ext.storageSet("fuckStorage", fuckStorage);
                     seal.replyToSender(ctx, msg, reply);
                 }
             }
