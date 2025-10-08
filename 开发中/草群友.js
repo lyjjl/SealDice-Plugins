@@ -224,7 +224,7 @@ if (!ext) {
     fuckLimit.maxFuckCount_today = seal.ext.getIntConfig(ext, "每天草群友次数上限");
 
     let fuckStorage = {};
-    ext.storageGet("fuckStorage", (val) => {
+    ext.storageGet("fuckStorage", (val) => { // 自动加载数据
         if (val) {
             fuckStorage = val;
         } else {
@@ -341,7 +341,7 @@ if (!ext) {
                         reply += `\n今天你已经草了 ${tmpUser.fuckCount_today} 次群友啦！`
                         if (tmpTargetUser.isComa) reply += `\n由于群友的过度操弄，[CQ:at,qq=${targetUserId}] 已经被草昏了！面对被草昏的群友，你的选择是......`
 
-                        ext.storageSet("fuckStorage", fuckStorage);
+                        ext.storageSet("fuckStorage", fuckStorage); // 存储数据
                         seal.replyToSender(ctx, msg, reply);
                     }
                 }            
