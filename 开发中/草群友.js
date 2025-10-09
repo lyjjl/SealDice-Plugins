@@ -60,15 +60,21 @@ if (!ext) {
      * @param {string} userId - 用户 ID (纯数字)
      * @param {object} defaultData - 初始数据对象，包含 fuckTime_first 或 beFuckedTime_first 字段
      */
-    function mergeUserData(fuckStorage, userId, defaultData) {
+    function mergeUserData(fuckStorage, ctx, defaultData) {
 
+        let userId = ctx.player.userId.replace(/\D/g, '');
         let userData = fuckStorage[userId];
 
         if (!userData) {
+            defaultData.name = ctx.player.name;
             fuckStorage[userId] = defaultData;
             return;
         }
-
+        
+        if (!userData.name) {
+            userData.name = ctx.player.name;
+        }
+        
         for (const key in defaultData) {
             if (!(key in userData)) {
                 userData[key] = defaultData[key];
@@ -150,10 +156,68 @@ if (!ext) {
         return Object.fromEntries(entries);
     }
 
+    /**
+ * 生成排行榜文本
+ * @param {Object} storage - 存储对象
+ * @param {string} field - 排序字段
+ * @param {string} title - 排行榜标题
+ * @param {string} unit - 单位描述
+ * @returns {string} 排行榜文本
+ */
+    function generateRanking(storage, field, title, unit, ctx) {
+        // 过滤出有该字段且值大于0的用户
+        const validUsers = Object.entries(storage)
+            .filter(([userId, data]) => data[field] !== undefined && data[field] > 0)
+            .map(([userId, data]) => ({
+                userId,
+                value: data[field],
+                name: data.name || `[CQ:at,qq=${userId}]` // 如果有名字就用名字，否则用@
+            }));
+
+        if (validUsers.length === 0) {
+            return `${title}\n暂无数据，大家都很纯洁呢~`;
+        }
+
+        // 按值降序排序
+        validUsers.sort((a, b) => b.value - a.value);
+
+        // 只取前10名
+        const topUsers = validUsers.slice(0, 10);
+
+        // 生成排行榜文本
+        let text = `===== ${title} =====\n`;
+        text += `🏆 排名 | 用户 | ${unit}\n`;
+        text += '----------------------------\n';
+
+        topUsers.forEach((user, index) => {
+            const rank = index + 1;
+            const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}.`;
+            text += `${rankEmoji} ${user.name} - ${user.value.toFixed(2)}${unit.includes('次') ? '' : 'ml'}\n`;
+        });
+
+        // 添加当前用户的位置（如果在10名之外）
+        const currentUser = validUsers.find(u => u.userId === ctx.player.userId);
+        if (currentUser && !topUsers.includes(currentUser)) {
+            const userRank = validUsers.findIndex(u => u.userId === ctx.userId) + 1;
+            text += `\n你的排名：${userRank}/${validUsers.length}`;
+        }
+
+        return text;
+    }
+
     ext = seal.ext.new('草群友', '某人', '1.0.0');
     seal.ext.register(ext);
     seal.ext.registerIntConfig(ext, "每天草群友次数上限", 5);
     seal.ext.registerIntConfig(ext, "草群友冷却时间(毫秒)", 30000);
+
+    seal.ext.registerTask(
+        ext,
+        "daily",
+        "0:00",
+        () => dailyReset(fuckStorage),
+        "FGM.每日重置",
+        "每天零点将 today 记录设为初始值"
+    )
 
     // 用插件设置覆盖默认值
     fuckLimit.cooldown = seal.ext.getIntConfig(ext, "草群友冷却时间(毫秒)");
@@ -169,15 +233,18 @@ if (!ext) {
         }
     });
 
-    // 确保 fuckStorage 已初始化后，再注册消息监听
-    ext.onNotCommandReceived = (ctx, msg) => {
-        try {
-            if (msg.message.replace(/\s/g, '').match(/^草群友\[CQ:at,qq=(\d+)\]$/)) {
+    const cmdCao = seal.ext.newCmdItemInfo();
+    cmdCao.name = 'cao';
+    cmdCao.help = `使用指令：.草群友@某人`;
+    cmdCao.allowDelegate = true;
+    cmdCao.solve = (ctx, msg, cmdArgs) => {
+    ctx.delegateText = "";
+        try {   
+                const mctx = seal.getCtxProxyFirst(ctx, cmdArgs);
+                const userId = ctx.player.userId.replace(/\D/g, '');
+                const targetUserId = mctx.player.userId.replace(/\D/g, '');
 
-                const userId = msg.sender.userId.replace(/\D/g, '');
-                const targetUserId = msg.message.replace(/\s/g, '').match(/^草群友\[CQ:at,qq=(\d+)\]$/)[1];
-
-                if (targetUserId === msg.sender.userId.replace(/\D/g, '')) {
+                if (targetUserId === userId) {
                     seal.replyToSender(ctx, msg, fuckNotice.noSelf_cross);
                     return;
                 };
@@ -199,7 +266,7 @@ if (!ext) {
                         ejaculateVolume_total: 0, // 总共射出的精华量 (ml, 2)
                         ejaculateVolume_today: 0 // 今日射出的精华量 (ml, 2)
                     };
-                    mergeUserData(fuckStorage, userId, defaultFuckStorage);
+                    mergeUserData(fuckStorage, ctx, defaultFuckStorage);
                 };
 
                 if (!tmpTargetUser || !tmpTargetUser.beFuckedTime_first) { // beFuck init
@@ -215,7 +282,7 @@ if (!ext) {
                         semenIn_today: 0, // 今日被灌注精华量 (ml, 2)
                         isComa: false // 是否被草昏
                     };
-                    mergeUserData(fuckStorage, targetUserId, defaultBeFuckedStorage);
+                    mergeUserData(fuckStorage, mctx, defaultBeFuckedStorage);
                 };
 
                 if (Date.now() - fuckStorage[userId].fuckTime_last_total < fuckLimit.cooldown) { // 贤者时间检查
@@ -277,8 +344,7 @@ if (!ext) {
                         ext.storageSet("fuckStorage", fuckStorage); // 存储数据
                         seal.replyToSender(ctx, msg, reply);
                     }
-                }
-            }
+                }            
         } catch (e) {
             console.error("[FGM]", e.message);
         }
@@ -300,14 +366,41 @@ if (!ext) {
             case '排行榜':
                 switch (cmdArgs.getArgN(2)) {
                     case '今日被草':
-                        let obj = sortNestedObject(fuckStorage, fuckCount_today);
-                        seal.replyToSender(ctx, msg, `最受欢迎的群友！\n🥇[CQ:at,qq=${obj[0]}]\n🥈[CQ:at,qq=${obj[1]}]\n🥉[CQ:at,qq=${obj[2]}]`)
+                        const todayBeFuckedRank = generateRanking(fuckStorage, 'beFuckedCount_today', '今日被草排行榜', '被草次数', ctx);
+                        seal.replyToSender(ctx, msg, todayBeFuckedRank);
+                        return;
+
+                    case '今日射精':
+                        const todayEjaculateRank = generateRanking(fuckStorage, 'ejaculateVolume_today', '今日射精排行榜', '射精量(ml)', ctx);
+                        seal.replyToSender(ctx, msg, todayEjaculateRank);
+                        return;
+
+                    case '总被草':
+                        const totalBeFuckedRank = generateRanking(fuckStorage, 'beFuckedCount_total', '总被草排行榜', '被草次数', ctx);
+                        seal.replyToSender(ctx, msg, totalBeFuckedRank);
+                        return;
+
+                    case '总射精':
+                        const totalEjaculateRank = generateRanking(fuckStorage, 'ejaculateVolume_total', '总射精排行榜', '射精量(ml)', ctx);
+                        seal.replyToSender(ctx, msg, totalEjaculateRank);
+                        return;
+
+                    default:
+                        const helpText = `请指定排行榜类型：
+- 今日被草：今日被草次数排行榜
+- 今日射精：今日射精量排行榜
+- 总被草：总被草次数排行榜
+- 总射精：总射精量排行榜
+用法：.fgm 排行榜 [类型]`;
+                        seal.replyToSender(ctx, msg, helpText);
                         return;
                 }
-                return;
         }
     };
 
     // 将命令注册到扩展中
+    ext.cmdMap['草群友'] = cmdCao;
+    ext.cmdMap['草'] = cmdCao;
+    ext.cmdMap['艹'] = cmdCao;
     ext.cmdMap['fgm'] = cmdFGM;
 };
