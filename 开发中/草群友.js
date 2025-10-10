@@ -215,25 +215,26 @@ if (!ext) {
         ctx.delegateText = "";
         try {
             // 处理help命令
-            if (cmdArgs.getArgN(1) === 'help') {
-                const helpText = `🍆 草群友插件 v1.1.0\n` +
-                    `主要命令：\n` +
-                    `.草群友 @某人 - 草指定的群友\n` +
-                    `.草 @某人 - 同上\n` +
-                    `.fgm 手冲 - 锻炼你的牛牛\n` +
-                    `.fgm 排行榜 [类型] - 查看各种排行榜\n` +
-                    `\n排行榜类型：\n` +
-                    `- 今日被草：今日被草次数排行榜\n` +
-                    `- 今日射精：今日射精量排行榜\n` +
-                    `- 今日牛牛长度：今日牛牛长度排行榜\n` +
-                    `- 总被草：总被草次数排行榜\n` +
-                    `- 总射精：总射精量排行榜\n` +
-                    `- 总牛牛长度：总牛牛长度排行榜\n` +
-                    `\n牛牛系统：\n` +
-                    `- 牛牛长度通过手冲随机变化\n` +
-                    `- 牛牛长度影响输出描述`;
-                seal.replyToSender(ctx, msg, helpText);
-                return;
+            switch (cmdArgs.getArgN(1)) {
+                case 'help':
+                    const helpText = `🍆 草群友插件 v1.1.0\n` +
+                        `主要命令：\n` +
+                        `.草群友 @某人 - 草指定的群友\n` +
+                        `.草 @某人 - 同上\n` +
+                        `.fgm 手冲 - 锻炼你的牛牛\n` +
+                        `.fgm 排行榜 [类型] - 查看各种排行榜\n` +
+                        `\n排行榜类型：\n` +
+                        `- 今日被草：今日被草次数排行榜\n` +
+                        `- 今日射精：今日射精量排行榜\n` +
+                        `- 今日牛牛长度：今日牛牛长度排行榜\n` +
+                        `- 总被草：总被草次数排行榜\n` +
+                        `- 总射精：总射精量排行榜\n` +
+                        `- 总牛牛长度：总牛牛长度排行榜\n` +
+                        `\n牛牛系统：\n` +
+                        `- 牛牛长度通过手冲随机变化\n` +
+                        `- 牛牛长度影响输出描述`;
+                    seal.replyToSender(ctx, msg, helpText);
+                    return seal.ext.newCmdExecuteResult(true);
             }
 
             const mctx = seal.getCtxProxyFirst(ctx, cmdArgs);
@@ -243,7 +244,7 @@ if (!ext) {
             // 禁止自交
             if (targetUserId === userId) {
                 seal.replyToSender(ctx, msg, fuckNotice.noSelf_cross);
-                return;
+                return seal.ext.newCmdExecuteResult(true);
             }
 
             // 初始化 攻
@@ -293,7 +294,7 @@ if (!ext) {
             // 检查今日草群友次数
             if (tmpUser.fuckCount_today >= fuckLimit.maxFuckCount_today) {
                 seal.replyToSender(ctx, msg, `你今天已经草群友 ${tmpUser.fuckCount_today} 次了，不要再草了。`);
-                return;
+                return seal.ext.newCmdExecuteResult(true);
             }
 
             // 计算时长和精华量
@@ -356,7 +357,7 @@ if (!ext) {
     // 扩展命令：fgm
     const cmdFGM = seal.ext.newCmdItemInfo();
     cmdFGM.name = 'fgm';
-    cmdFGM.help = `=== 草群友 (拓展) ===\n此处为草群友的拓展命令\n`;
+    cmdFGM.help = `草群友 (拓展) 。fgm help 查看帮助`;
     cmdFGM.solve = (ctx, msg, cmdArgs) => {
         try {
             const userId = ctx.player.userId.replace(/\D/g, '');
@@ -384,34 +385,34 @@ if (!ext) {
                     fuckStorage[userId].dick_length = Math.max(fuckLimit.minLength, Math.min(fuckLimit.maxLength, fuckStorage[userId].dick_length + grow));
                     seal.replyToSender(ctx, msg, `🦌!🦌!!🦌!!!\n牛子精灵眷顾了你\n你的牛子生长了 ${grow.toFixed(2)}cm!\n可喜可贺 (?)`);
                     ext.storageSet("fuckStorage", fuckStorage);
-                    return;
+                    return seal.ext.newCmdExecuteResult(true);
 
                 case '排行榜':
                     switch (cmdArgs.getArgN(2)) {
                         case '今日被草':
                             const todayBeFuckedRank = generateRanking(fuckStorage, 'beFuckedCount_today', '今日被草排行榜', '被草次数', ctx);
                             seal.replyToSender(ctx, msg, todayBeFuckedRank);
-                            return;
+                            return seal.ext.newCmdExecuteResult(true);
                         case '今日射精':
                             const todayEjaculateRank = generateRanking(fuckStorage, 'ejaculateVolume_today', '今日射精排行榜', '射精量(ml)', ctx);
                             seal.replyToSender(ctx, msg, todayEjaculateRank);
-                            return;
+                            return seal.ext.newCmdExecuteResult(true);
                         case '今日牛牛长度':
                             const todayDickLengthRank = generateRanking(fuckStorage, 'dick_length', '今日牛牛长度排行榜', '牛牛长度(cm)', ctx);
                             seal.replyToSender(ctx, msg, todayDickLengthRank);
-                            return;
+                            return seal.ext.newCmdExecuteResult(true);
                         case '总被草':
                             const totalBeFuckedRank = generateRanking(fuckStorage, 'beFuckedCount_total', '总被草排行榜', '被草次数', ctx);
                             seal.replyToSender(ctx, msg, totalBeFuckedRank);
-                            return;
+                            return seal.ext.newCmdExecuteResult(true);
                         case '总射精':
                             const totalEjaculateRank = generateRanking(fuckStorage, 'ejaculateVolume_total', '总射精排行榜', '射精量(ml)', ctx);
                             seal.replyToSender(ctx, msg, totalEjaculateRank);
-                            return;
+                            return seal.ext.newCmdExecuteResult(true);
                         case '总牛牛长度':
                             const totalDickLengthRank = generateRanking(fuckStorage, 'dick_length', '总牛牛长度排行榜', '牛牛长度(cm)', ctx);
                             seal.replyToSender(ctx, msg, totalDickLengthRank);
-                            return;
+                            return seal.ext.newCmdExecuteResult(true);
                         default:
                             const helpText = `请指定排行榜类型：\n` +
                                 `- 今日被草：今日被草次数排行榜\n` +
@@ -422,7 +423,7 @@ if (!ext) {
                                 `- 总牛牛长度：总牛牛长度排行榜\n` +
                                 `用法：.fgm 排行榜 [类型]`;
                             seal.replyToSender(ctx, msg, helpText);
-                            return;
+                            return seal.ext.newCmdExecuteResult(true);
                     }
 
                 default:
@@ -432,7 +433,7 @@ if (!ext) {
                         `.fgm 排行榜 [类型] - 查看各种排行榜\n` +
                         `输入 .草群友 help 查看完整帮助`;
                     seal.replyToSender(ctx, msg, defaultHelp);
-                    return;
+                    return seal.ext.newCmdExecuteResult(true);
             }
         } catch (e) {
             console.error("[FGM] 错误:", e.message);
