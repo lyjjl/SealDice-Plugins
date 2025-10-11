@@ -214,7 +214,7 @@ if (!ext) {
                     return seal.ext.newCmdExecuteResult(true);
             }
         } catch (e) {
-            seal.replyToSender(ctz, msg, `[PRTC] 计算失败，错误信息：${e.message}`);
+            seal.replyToSender(ctx, msg, `[PRTC] 计算失败，错误信息：${e.message}`);
             console.error(`[PRTC] 计算失败，错误信息：${e.message}`);
             return seal.ext.newCmdExecuteResult(true);
         }
