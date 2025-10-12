@@ -13,3 +13,6 @@ qr-code.*
 node_modules/
 
 开发中/SugarReplacer/code/src/wsManager.ts
+开发中/AutoGithubPUSH/
+package-lock.json
+package.json

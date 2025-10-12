@@ -172,7 +172,7 @@ if (!ext) {
         try {
             switch (cmdArgs.getArgN(1)) {
                 case 'help':
-                    seal.replyToSender(ext, msg, ``);
+                    // seal.replyToSender(ctx, msg, ``);
                     const res = seal.ext.newCmdExecuteResult(true);
                     res.showHelp = true;
                     return res;
@@ -181,22 +181,22 @@ if (!ext) {
                     switch (cmdArgs.getArgN(2)) {
                         case 'a':
                             seal.vars.strSet(ctx, '$g泛界旅者资源a', parseFloat(cmdArgs.getArgN(3)));
-                            seal.replyToSender(ext, msg, `已将α权重设置为${cmdArgs.getArgN(3)}`);
+                            seal.replyToSender(ctx, msg, `已将α权重设置为${cmdArgs.getArgN(3)}`);
                             return seal.ext.newCmdExecuteResult(true);
                         case 'b':
                             seal.vars.strSet(ctx, '$g泛界旅者资源b', parseFloat(cmdArgs.getArgN(3)));
-                            seal.replyToSender(ext, msg, `已将β权重设置为${cmdArgs.getArgN(3)}`);
+                            seal.replyToSender(ctx, msg, `已将β权重设置为${cmdArgs.getArgN(3)}`);
                             return seal.ext.newCmdExecuteResult(true);
                         case 'g':
                             seal.vars.strSet(ctx, '$g泛界旅者资源g', parseFloat(cmdArgs.getArgN(3)));
-                            seal.replyToSender(ext, msg, `已将γ权重设置为${cmdArgs.getArgN(3)}`);
+                            seal.replyToSender(ctx, msg, `已将γ权重设置为${cmdArgs.getArgN(3)}`);
                             return seal.ext.newCmdExecuteResult(true);
                         case 'd':
                             seal.vars.strSet(ctx, '$g泛界旅者资源d', parseFloat(cmdArgs.getArgN(3)));
-                            seal.replyToSender(ext, msg, `已将δ权重设置为${cmdArgs.getArgN(3)}`);
+                            seal.replyToSender(ctx, msg, `已将δ权重设置为${cmdArgs.getArgN(3)}`);
                             return seal.ext.newCmdExecuteResult(true);
                         default:
-                            seal.replyToSender(ext, msg, `未知的权重名，请使用 .资源计算 help 查看帮助`);
+                            seal.replyToSender(ctx, msg, `未知的权重名，请使用 .资源计算 help 查看帮助`);
                             return seal.ext.newCmdExecuteResult(false);
                     }
 
@@ -210,11 +210,11 @@ if (!ext) {
                     });
 
                     const value = easyCalculate(iString, weights);
-                    seal.replyToSender(ext, msg, `计算结果：特征价值 V = ${value.toFixed(2)}`);
+                    seal.replyToSender(ctx, msg, `计算结果：特征价值 V = ${value.toFixed(2)}`);
                     return seal.ext.newCmdExecuteResult(true);
             }
         } catch (e) {
-            seal.replyToSender(ext, msg, `[PRTC] 计算失败，错误信息：${e.message}`);
+            seal.replyToSender(ctx, msg, `[PRTC] 计算失败，错误信息：${e.message}`);
             console.error(`[PRTC] 计算失败，错误信息：${e.message}`);
             return seal.ext.newCmdExecuteResult(true);
         }
