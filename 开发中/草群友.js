@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         草群友
-// @author       暮星、某人
-// @version      1.1.0
+// @author       暮星、某人、米线
+// @version      1.2.0
 // @Stage        impact，启动！一！Usage：草群友@xxx | .草群友 help
 // @timestamp    0
 // @license      MIT
@@ -19,7 +19,8 @@ const fuckLimit = {
     maxLength: 50, // 最大牛牛长度 (cm)
     maxFuckCount_today: 10, // 每日最大草群友次数
     beComa: 7, // 被草多少次进入昏迷状态
-    cooldown: 30000 // 草群友冷却时间 (ms)
+    cooldown: 30000, // 草群友冷却时间 (ms)
+    wakeUpChance: 0.3 // 清醒指令成功概率
 };
 
 // 牛牛长度描述
@@ -50,7 +51,13 @@ const fuckNotice = {
         1: (targetUserId) => `虽然 [CQ:at,qq=${targetUserId}] 今天已经被草晕了过去，但你已经兽性大发，抱着此人的娇躯一次又一次地注入浓郁的生命精华，顺着白嫩的大腿流了一地。空气中满是淫靡的气息`,
         2: (targetUserId) => `[CQ:at,qq=${targetUserId}] 在你持之以恒的操弄下已经失去了意识，可你仍然对那不断抽搐的娇躯发泄着欲望，不断地冲击着群友的底线`,
         3: (targetUserId) => `[CQ:at,qq=${targetUserId}] 在你毫无克制的纵欲下露出了被玩坏的表情，却也无法阻止你一次又一次把浓郁的生命精华注入到体内，只能无力的喘息`
-    }
+    },
+    comaWakeUp: {
+        success: (userId) => `[CQ:at,qq=${userId}] 挣扎着从昏迷中清醒过来，大腿间还残留着黏糊糊的精液`,
+        fail: (userId) => `[CQ:at,qq=${userId}] 试图睁开眼睛，但下体传来的酸痛感又让你陷入了昏迷`,
+        notComa: (userId) => `[CQ:at,qq=${userId}] 你现在很清醒，不需要醒过来`
+    },
+    comaAction: "你已经被草晕了，先醒过来再说吧"
 };
 
 // 插件注册
@@ -176,10 +183,14 @@ if (!ext) {
     }
 
     // 注册扩展
-    ext = seal.ext.new('草群友', '暮星、某人', '1.1.0');
+    ext = seal.ext.new('草群友', '暮星、某人', '1.2.0');
     seal.ext.register(ext);
     seal.ext.registerIntConfig(ext, "每天草群友次数上限", 25);
     seal.ext.registerIntConfig(ext, "草群友冷却时间(毫秒)", 30000);
+    seal.ext.registerIntConfig(ext,"草晕需要次数",7);
+    seal.ext.registerIntConfig(ext,"最短长度",0);
+    seal.ext.registerIntConfig(ext,"最长长度",50);
+    seal.ext.registerFloatConfig(ext, "清醒概率", 0.3);
 
     // 每日重置任务
     seal.ext.registerTask(
@@ -194,6 +205,11 @@ if (!ext) {
     // 用插件设置覆盖默认值
     fuckLimit.cooldown = seal.ext.getIntConfig(ext, "草群友冷却时间(毫秒)");
     fuckLimit.maxFuckCount_today = seal.ext.getIntConfig(ext, "每天草群友次数上限");
+    fuckLimit.minLength = seal.ext.getIntConfig(ext,"最短长度");
+    fuckLimit.maxLength = seal.ext.getIntConfig(ext,"最长长度");
+    fuckLimit.beComa = seal.ext.getIntConfig(ext,"草晕需要次数");
+    fuckLimit.wakeUpChance = seal.ext.getFloatConfig(ext, "清醒概率");
+
 
     // 初始化存储
     let fuckStorage = {};
@@ -215,36 +231,46 @@ if (!ext) {
         ctx.delegateText = "";
         try {
             // 处理help命令
-            switch (cmdArgs.getArgN(1)) {
-                case 'help':
-                    const helpText = `🍆 草群友插件 v1.1.0\n` +
-                        `主要命令：\n` +
-                        `.草群友 @某人 - 草指定的群友\n` +
-                        `.草 @某人 - 同上\n` +
-                        `.fgm 手冲 - 锻炼你的牛牛\n` +
-                        `.fgm 排行榜 [类型] - 查看各种排行榜\n` +
-                        `\n排行榜类型：\n` +
-                        `- 今日被草：今日被草次数排行榜\n` +
-                        `- 今日射精：今日射精量排行榜\n` +
-                        `- 今日牛牛长度：今日牛牛长度排行榜\n` +
-                        `- 总被草：总被草次数排行榜\n` +
-                        `- 总射精：总射精量排行榜\n` +
-                        `- 总牛牛长度：总牛牛长度排行榜\n` +
-                        `\n牛牛系统：\n` +
-                        `- 牛牛长度通过手冲随机变化\n` +
-                        `- 牛牛长度影响输出描述`;
-                    seal.replyToSender(ctx, msg, helpText);
-                    return seal.ext.newCmdExecuteResult(true);
+            if (cmdArgs.getArgN(1) === 'help') {
+                const helpText = `🍆 草群友插件 v1.2.0\n` +
+                    `主要命令：\n` +
+                    `.草群友 @某人 - 草指定的群友\n` +
+                    `.草 @某人 - 同上\n` +
+                    `.fgm 手冲 - 随机改变牛牛长度\n` +
+                    `.fgm 清醒 - 尝试从昏迷状态中醒来\n` +
+                    `.fgm 排行榜 [类型] - 查看各种排行榜\n` +
+                    `\n排行榜类型：\n` +
+                    `- 今日被草：今日被草次数排行榜\n` +
+                    `- 今日射精：今日射精量排行榜\n` +
+                    `- 今日牛牛长度：今日牛牛长度排行榜\n` +
+                    `- 总被草：总被草次数排行榜\n` +
+                    `- 总射精：总射精量排行榜\n` +
+                    `- 总牛牛长度：总牛牛长度排行榜\n` +
+                    `\n牛牛系统：\n` +
+                    `- 牛牛长度通过手冲随机变化\n` +
+                    `- 牛牛长度影响输出描述\n` +
+                    `\n昏迷系统：\n` +
+                    `- 被草超过${fuckLimit.beComa}次会进入昏迷状态\n` +
+                    `- 昏迷状态下无法使用草群友指令\n` +
+                    `- 使用 .fgm 清醒 尝试醒来`;
+                seal.replyToSender(ctx, msg, helpText);
+                return;
             }
 
             const mctx = seal.getCtxProxyFirst(ctx, cmdArgs);
             const userId = ctx.player.userId.replace(/\D/g, '');
             const targetUserId = mctx.player.userId.replace(/\D/g, '');
 
+            // 检查当前用户是否昏迷
+            if (fuckStorage[userId] && fuckStorage[userId].isComa) {
+                seal.replyToSender(ctx, msg, fuckNotice.comaAction);
+                return;
+            }
+
             // 禁止自交
             if (targetUserId === userId) {
                 seal.replyToSender(ctx, msg, fuckNotice.noSelf_cross);
-                return seal.ext.newCmdExecuteResult(true);
+                return;
             }
 
             // 初始化 攻
@@ -294,7 +320,7 @@ if (!ext) {
             // 检查今日草群友次数
             if (tmpUser.fuckCount_today >= fuckLimit.maxFuckCount_today) {
                 seal.replyToSender(ctx, msg, `你今天已经草群友 ${tmpUser.fuckCount_today} 次了，不要再草了。`);
-                return seal.ext.newCmdExecuteResult(true);
+                return;
             }
 
             // 计算时长和精华量
@@ -334,14 +360,14 @@ if (!ext) {
                 tmpTargetUser.semenIn_total += extraEjaculateVolume;
                 tmpTargetUser.semenIn_today += extraEjaculateVolume;
             } else {
-                reply += `你用你 ${getDescription(lengthStage, tmpUser.dick_length)} 牛子草了 [CQ:at,qq=${targetUserId}] ${fuckDuration}分钟，注入了 ${semenVolume}ml 浓郁的生命精华`;
+                reply += `你用你 ${getDescription(lengthStage, tmpUser.dick_length)} 牛子草了 [CQ:at,qq=${targetUserId}] ${fuckDuration}分钟，注入了 ${semenVolume.toFixed(2)}ml 浓郁的生命精华`;
                 if (tmpTargetUser.beFuckedCount_today === 1) {
                     reply += `\n😋你拿下了 [CQ:at,qq=${targetUserId}] 今日一血！`;
                 }
             }
 
             reply += `\n[CQ:image,url=http://q.qlogo.cn/headimg_dl?dst_uin=${targetUserId}&spec=640&img_type=jpg,c=3]`;
-            reply += `\n她的体内充盈着 ${tmpTargetUser.semenIn_today}ml 浓郁的生命精华，小腹${getDescription(abdomenStage, tmpTargetUser.semenIn_today)}！`;
+            reply += `\n她的体内充盈着 ${tmpTargetUser.semenIn_today.toFixed(2)}ml 浓郁的生命精华，小腹${getDescription(abdomenStage, tmpTargetUser.semenIn_today)}！`;
             reply += `\n今天你已经草了 ${tmpUser.fuckCount_today} 次群友啦！`;
             if (tmpTargetUser.isComa) {
                 reply += `\n由于群友的过度操弄，[CQ:at,qq=${targetUserId}] 已经被草昏了！面对被草昏的群友，你的选择是......`;
@@ -357,7 +383,7 @@ if (!ext) {
     // 扩展命令：fgm
     const cmdFGM = seal.ext.newCmdItemInfo();
     cmdFGM.name = 'fgm';
-    cmdFGM.help = `草群友 (拓展) 。fgm help 查看帮助`;
+    cmdFGM.help = `=== 草群友 (拓展) ===\n此处为草群友的拓展命令\n`;
     cmdFGM.solve = (ctx, msg, cmdArgs) => {
         try {
             const userId = ctx.player.userId.replace(/\D/g, '');
@@ -385,34 +411,51 @@ if (!ext) {
                     fuckStorage[userId].dick_length = Math.max(fuckLimit.minLength, Math.min(fuckLimit.maxLength, fuckStorage[userId].dick_length + grow));
                     seal.replyToSender(ctx, msg, `🦌!🦌!!🦌!!!\n牛子精灵眷顾了你\n你的牛子生长了 ${grow.toFixed(2)}cm!\n可喜可贺 (?)`);
                     ext.storageSet("fuckStorage", fuckStorage);
-                    return seal.ext.newCmdExecuteResult(true);
+                    return;
+
+                case '清醒':
+                    // 检查是否处于昏迷状态
+                    if (!fuckStorage[userId].isComa) {
+                        seal.replyToSender(ctx, msg, fuckNotice.comaWakeUp.notComa(userId));
+                        return;
+                    }
+                    
+                    // 概率清醒
+                    if (Math.random() < fuckLimit.wakeUpChance) {
+                        fuckStorage[userId].isComa = false;
+                        seal.replyToSender(ctx, msg, fuckNotice.comaWakeUp.success(userId));
+                    } else {
+                        seal.replyToSender(ctx, msg, fuckNotice.comaWakeUp.fail(userId));
+                    }
+                    ext.storageSet("fuckStorage", fuckStorage);
+                    return;
 
                 case '排行榜':
                     switch (cmdArgs.getArgN(2)) {
                         case '今日被草':
                             const todayBeFuckedRank = generateRanking(fuckStorage, 'beFuckedCount_today', '今日被草排行榜', '被草次数', ctx);
                             seal.replyToSender(ctx, msg, todayBeFuckedRank);
-                            return seal.ext.newCmdExecuteResult(true);
+                            return;
                         case '今日射精':
                             const todayEjaculateRank = generateRanking(fuckStorage, 'ejaculateVolume_today', '今日射精排行榜', '射精量(ml)', ctx);
                             seal.replyToSender(ctx, msg, todayEjaculateRank);
-                            return seal.ext.newCmdExecuteResult(true);
+                            return;
                         case '今日牛牛长度':
                             const todayDickLengthRank = generateRanking(fuckStorage, 'dick_length', '今日牛牛长度排行榜', '牛牛长度(cm)', ctx);
                             seal.replyToSender(ctx, msg, todayDickLengthRank);
-                            return seal.ext.newCmdExecuteResult(true);
+                            return;
                         case '总被草':
                             const totalBeFuckedRank = generateRanking(fuckStorage, 'beFuckedCount_total', '总被草排行榜', '被草次数', ctx);
                             seal.replyToSender(ctx, msg, totalBeFuckedRank);
-                            return seal.ext.newCmdExecuteResult(true);
+                            return;
                         case '总射精':
                             const totalEjaculateRank = generateRanking(fuckStorage, 'ejaculateVolume_total', '总射精排行榜', '射精量(ml)', ctx);
                             seal.replyToSender(ctx, msg, totalEjaculateRank);
-                            return seal.ext.newCmdExecuteResult(true);
+                            return;
                         case '总牛牛长度':
                             const totalDickLengthRank = generateRanking(fuckStorage, 'dick_length', '总牛牛长度排行榜', '牛牛长度(cm)', ctx);
                             seal.replyToSender(ctx, msg, totalDickLengthRank);
-                            return seal.ext.newCmdExecuteResult(true);
+                            return;
                         default:
                             const helpText = `请指定排行榜类型：\n` +
                                 `- 今日被草：今日被草次数排行榜\n` +
@@ -423,17 +466,18 @@ if (!ext) {
                                 `- 总牛牛长度：总牛牛长度排行榜\n` +
                                 `用法：.fgm 排行榜 [类型]`;
                             seal.replyToSender(ctx, msg, helpText);
-                            return seal.ext.newCmdExecuteResult(true);
+                            return;
                     }
 
                 default:
                     const defaultHelp = `🍆 草群友拓展命令\n` +
                         `可用命令：\n` +
                         `.fgm 手冲 - 随机改变牛牛长度\n` +
+                        `.fgm 清醒 - 尝试从昏迷状态中醒来\n` +
                         `.fgm 排行榜 [类型] - 查看各种排行榜\n` +
                         `输入 .草群友 help 查看完整帮助`;
                     seal.replyToSender(ctx, msg, defaultHelp);
-                    return seal.ext.newCmdExecuteResult(true);
+                    return;
             }
         } catch (e) {
             console.error("[FGM] 错误:", e.message);
