@@ -14,7 +14,8 @@
 **屎山代码认证**
 [![代码评级：反人类级灾难性屎山💩](https://img.shields.io/static/v1?label=代码评级&message=反人类级灾难性屎山💩&color=7B5804&style=flat&logo=speedtest)](https://github.com/lyjjl/SealDice-Plugins)
 
-👇以下是插件列表👇
+👇**以下是插件列表**👇
+> ~~其实还有一些，但是我懒得更新列表了~~
 
 ### 🧩娱乐
  * `统计学骰子.js` -- 使用更统计学的方法骰点！
