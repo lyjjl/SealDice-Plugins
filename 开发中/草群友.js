@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         草群友
-// @author       暮星、某人、米线
+// @author       暮星、米线、某人
 // @version      1.2.0
 // @Stage        impact，启动！一！Usage：草群友@xxx | .草群友 help
 // @timestamp    0
@@ -135,6 +135,7 @@ if (!ext) {
             tmpUser.beFuckedCount_today = 0;
             tmpUser.beFuckedDuration_today = 0;
             tmpUser.semenIn_today = 0;
+            tmpUser.comaTimer = 0;
             tmpUser.isComa = false;
         }
     }
@@ -305,7 +306,12 @@ if (!ext) {
                     beFuckedDuration_today: 0, // 今日被草时长 (Min, 2)
                     semenIn_total: 0, // 总共被灌注精华量 (ml, 2)
                     semenIn_today: 0, // 今日被灌注精华量 (ml, 2)
+                    comaTimer: 0, // 草晕计数器
                     isComa: false // 是否被草昏
+                };
+                if (!tmpTargetUser.comaTimer) {
+                    // 临时处理措施，在下个大版本移除
+                    tmpTargetUser.comaTimer = 0;
                 };
                 mergeUserData(fuckStorage, mctx, defaultBeFuckedStorage);
                 tmpTargetUser = fuckStorage[targetUserId];
@@ -347,7 +353,8 @@ if (!ext) {
             tmpTargetUser.beFuckedDuration_today += fuckDuration;
             tmpTargetUser.semenIn_total += semenVolume;
             tmpTargetUser.semenIn_today += semenVolume;
-            tmpTargetUser.isComa = tmpTargetUser.beFuckedCount_today >= fuckLimit.beComa;
+            tmpTargetUser.comaTimer += 1;
+            tmpTargetUser.isComa = tmpTargetUser.comaTimer >= fuckLimit.beComa;
 
             let reply = "";
             if (tmpTargetUser.isComa) {
@@ -422,6 +429,7 @@ if (!ext) {
                     
                     // 概率清醒
                     if (Math.random() < fuckLimit.wakeUpChance) {
+                        fuckStorage[userId].comaTimer = 0;
                         fuckStorage[userId].isComa = false;
                         seal.replyToSender(ctx, msg, fuckNotice.comaWakeUp.success(userId));
                     } else {
