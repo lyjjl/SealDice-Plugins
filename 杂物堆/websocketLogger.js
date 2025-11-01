@@ -22,6 +22,9 @@ if (!ext) {
 
     ws.onopen = (event) => {
         console.log("[WSL@Connect:Info] Connected!");
+        if (event.data.post_type != "meta_event" || event.data.sub_type != "connect"){
+            console.warn("[WSL@Connect:Warn] May NOT connect to NapCat Websocket Server");
+        }
     }
 
     ws.onmessage = (event) => {

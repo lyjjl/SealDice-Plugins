@@ -20,7 +20,7 @@
         "moduleDetection": "force"
     },
     "exclude": [
-        "node_modules",
+        "杂物堆/QQTEA/node_modules",
         "**/node_modules/*",
         "dist",
         "build"
