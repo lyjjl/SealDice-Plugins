@@ -15,25 +15,20 @@
  * @returns {string|null} 标准化后的 URL 字符串，如果格式不正确则返回 null
  */
 function normalizeUR(str) {
-    // 移除换行符和首尾空格
     str = str.replace(/\n/g, '').trim();
 
-    // 检查是否为空字符串
     if (!str) {
         console.error("[url 标准化]：空地址！请检查配置并重载插件！");
         return null;
     }
 
-    // 验证 URL 格式
     const urlRegex = /^https?:\/\/[\-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[\-A-Za-z0-9+&@#\/%=~_|]$/i;
     if (!urlRegex.test(str)) {
         console.error("[url 标准化]：地址异常！请检查配置并重载插件！");
         return null;
     }
 
-    // 标准化斜杠
     str = str.replace(/([^:])(\/\/+)/g, '$1/');
-
     // 确保 URL 以斜杠结尾
     if (str.match(/^https?:\/\/[^\/]+$/)) {
         str += '/';
@@ -98,7 +93,7 @@ function getReplyIdAndCheckKeyword(message, keywords) {
     const keywordRegex = keywords.map(kw => kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
     if (debug) console.log("[匹配] 生成的关键词正则片段：", keywordRegex);
 
-    const regex = new RegExp(`\\[CQ:reply,id=(\\d+)\\](?:${keywordRegex})`, 'i');
+    const regex = new RegExp(`\[CQ:reply,id=(\d+)](?:${keywordRegex})`, 'i');
     if (debug) console.log("[匹配] 最终的正则表达式：", regex);
 
     const match = message.match(regex);

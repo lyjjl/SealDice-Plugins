@@ -126,7 +126,7 @@ if (!ext) {
      * @param {string} str - 需要标准化的 URL 字符串。
      * @returns {string|null} 标准化后的 URL 字符串，如果格式不正确则返回 null。
      */
-    function T_normalizeURL(str) {
+    function normalizeURL(str) {
         // 移除换行符和首尾空格
         str = str.replace(/\n/g, '').trim();
 
@@ -165,10 +165,10 @@ if (!ext) {
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null。
      */
     async function apiRequest(baseurl, apipath, body) {
-        let Nurl = T_normalizeURL(baseurl + apipath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
+        let nUrl = normalizeUrl(baseurl + apipath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
 
         try {
-            let response = await fetch(Nurl, {
+            let response = await fetch(nUrl, {
                 method: 'POST',
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -177,26 +177,16 @@ if (!ext) {
                 cache: "no-cache",
                 credentials: "same-origin",
                 redirect: "follow",
-                referrerPolicy: "no-referrer"
             });
 
-
-            let response_data;
-
-            // 先检查响应状态
             if (!response.ok) {
-                // HTTP 请求失败
-                response_data = await response.text();
+                let response_data = await response.text();
                 console.error(`HTTP 请求失败，状态码：${response.status}`, response_data);
                 return null;
+            } else {
+                // console.info("HTTP 请求成功：", apipath);
+                return await response.json();
             }
-
-            // HTTP 请求成功
-            response_data = await response.json();
-
-            console.info("HTTP 请求成功：", apipath);
-            return response_data;
-
         } catch (error) {
             console.error('HTTP 请求失败', error, " API: ", apipath);
             return null;
