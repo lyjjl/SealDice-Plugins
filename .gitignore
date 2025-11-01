@@ -4,6 +4,7 @@ sealdice-js-ext-template
 *.groovy
 /屎山区/
 .venv
+*/.idea
 qr-code.*
 */test/
 */data/
@@ -14,10 +15,11 @@ node_modules/
 
 开发中/SugarReplacer/code/src/wsManager.ts
 开发中/AutoGithubPUSH/
-package-lock.json
-package.json
 杂物堆/NC-WS-event.md
-开发中/\[WS]入群验证.js
+开发中/\[WS\]入群验证.js
 
 QQTEA*
 *.env
+
+DGDEV*
+\.idea
