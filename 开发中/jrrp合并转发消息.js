@@ -48,45 +48,43 @@ function buildForwardMsg (ctx, messages = [], news = [], prompt = "", summary = 
 }
 
 function normalizeUrl(str) {
-    const trimmedStr = (str || '').replace(/\s+/g, '').trim();
-
-    if (!trimmedStr) {
+    const url = (str || '').replace(/\s+/g, '');
+    if (!url) {
         console.error("[normalizeUrl] 空地址！请检查配置并重载插件！");
         return null;
     }
 
-    const urlRegex = /^https?:\/\/\S+$/i;
-    if (!urlRegex.test(trimmedStr)) {
+    if (!/^https?:\/\/\S+$/i.test(url)) {
         console.error("[normalizeUrl] 地址异常！请检查配置并重载插件！");
         return null;
     }
 
-    let result = trimmedStr;
-
-    result = result.replace(/([^:])\/\/+/g, '$1/');
-
+    let result = url.replace(/([^:])\/\/+/g, '$1/');
     const pathOnly = result.split(/[?#]/)[0];
-    if (pathOnly.match(/^https?:\/\/[^\/]+$/)) {
+
+    if (/^https?:\/\/[^\/]+$/.test(pathOnly)) {
         result += '/';
     }
 
     return result;
 }
 
-async function apiRequest(baseurl, apiPath, body) {
-    let nUrl = normalizeUrl(baseurl + apiPath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
+async function apiRequest(baseUrl = "", apiPath = "", body = {}, token = "") {
+    let nUrl = normalizeUrl(baseUrl + apiPath);
+    if (!nUrl) return null;
+
+    let headers = {
+        "Content-type": "application/json; charset=UTF-8"
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
         let response = await fetch(nUrl, {
             method: 'POST',
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
+            headers: headers,
             body: JSON.stringify(body),
-            cache: "no-cache",
-            credentials: "same-origin",
-            redirect: "follow",
-            referrerPolicy: "no-referrer"
         });
 
         if (!response.ok) {
@@ -94,7 +92,6 @@ async function apiRequest(baseurl, apiPath, body) {
             console.error(`HTTP 请求失败，状态码：${response.status}`, response_data);
             return null;
         } else {
-            // console.info("HTTP 请求成功：", apiPath);
             return await response.json();
         }
     } catch (error) {
@@ -115,6 +112,7 @@ if (!ext) {
 
         // --- 插件配置 ---
         seal.ext.registerStringConfig(ext, "httpServerUrl", "http://127.0.0.1:3001", "HTTP Server 地址");
+        seal.ext.registerStringConfig(ext, "httpToken", "", "HTTP Token");
         seal.ext.registerStringConfig(ext, "jrrp_help", ".jrrp 抽取你的今日人品，一天之内不会变化。\n人品从 1 到 100 越高越好哦~", "jrrp.help 内容，修改后保存重载插件");
         seal.ext.registerTemplateConfig(ext, "FM_news", ["咕", "咕", "嘎", "嘎"], "群内聊天记录预览，最多4条（空置news，多个随机一）");
         seal.ext.registerTemplateConfig(ext, "FM_prompt", ["{核心:骰子名字}为{$t玩家}占卜了今天的人品值！"], "群外合并消息预览（空置prompt，多个随机一）");
@@ -200,7 +198,8 @@ if (!ext) {
             await apiRequest(
                 seal.ext.getStringConfig(ext, "httpServerUrl"),
                 "send_forward_msg",
-                reqData
+                reqData,
+                seal.ext.getStringConfig(ext, "httpToken")
             );
             return seal.ext.newCmdExecuteResult(true);
         };

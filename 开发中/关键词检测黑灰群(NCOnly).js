@@ -18,10 +18,6 @@ if (!ext) {
     const ext = seal.ext.new('CheckBlackGroup', '是非分明 x 某人', '1.0.0');
     seal.ext.register(ext);
 
-
-
-
-
     // 注册扩展并且整一个关键词匹配测试
     /**
      * 注意：
@@ -37,8 +33,6 @@ if (!ext) {
     seal.ext.registerStringConfig(ext, "dailyExpression", "07:00", "定时任务 [检查群组列表] 的 daily 表达式", "到时间检查群组列表中有无奇怪东西。格式为 hh:mm 或者 h:mm");
     // 某：corn 表达式更加可自定义。但是可能会增加学习成本，考虑加一个 bool 配置允许切换
     // 某：我又考虑了下还是 corn 好，daily 太受限了
-
-
 
     // 注册配置项
 
@@ -126,35 +120,26 @@ if (!ext) {
      * @param {string} str - 需要标准化的 URL 字符串。
      * @returns {string|null} 标准化后的 URL 字符串，如果格式不正确则返回 null。
      */
-    function normalizeURL(str) {
-        // 移除换行符和首尾空格
-        str = str.replace(/\n/g, '').trim();
-
-        // 检查是否为空字符串
-        if (!str) {
-            console.error("[url 标准化]：空地址！请检查配置并重载插件！");
+    function normalizeUrl(str) {
+        const url = (str || '').replace(/\s+/g, '');
+        if (!url) {
+            console.error("[normalizeUrl] 空地址！请检查配置并重载插件！");
             return null;
         }
 
-        // 验证 URL 格式，只允许 http 和 https，免得有人才写个 ws://xxx 上去
-        // 某：青果群有人不写 http:// 越发的觉得有必要
-        const urlRegex = /^https?:\/\/[\-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[\-A-Za-z0-9+&@#\/%=~_|]$/i;
-
-        if (!urlRegex.test(str)) {
-            console.error("[url 标准化]：地址异常！请检查配置并重载插件！");
+        if (!/^https?:\/\/\S+$/i.test(url)) {
+            console.error("[normalizeUrl] 地址异常！请检查配置并重载插件！");
             return null;
         }
 
-        // 标准化斜杠：将多个斜杠替换为单个斜杠（但保留协议部分的://）
-        str = str.replace(/([^:])(\/\/+)/g, '$1/');
+        let result = url.replace(/([^:])\/\/+/g, '$1/');
+        const pathOnly = result.split(/[?#]/)[0];
 
-        // 确保 URL 以斜杠结尾
-        if (str.match(/^https?:\/\/[^\/]+$/)) {
-            str += '/';
-            console.info("[url 标准化]：已经自动在尾部添加'/'");
+        if (/^https?:\/\/[^\/]+$/.test(pathOnly)) {
+            result += '/';
         }
 
-        return str;
+        return result;
     }
 
     /**
@@ -164,19 +149,22 @@ if (!ext) {
      * @param {object} body - 请求体，将被 JSON.stringify 转换。
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null。
      */
-    async function apiRequest(baseurl, apipath, body) {
-        let nUrl = normalizeUrl(baseurl + apipath); // 理论上 baseurl 应该以/结尾，不过没关系，会标准化的
+    async function apiRequest(baseUrl = "", apiPath = "", body = {}, token = "") {
+        let nUrl = normalizeUrl(baseUrl + apiPath);
+        if (!nUrl) return null;
+
+        let headers = {
+            "Content-type": "application/json; charset=UTF-8"
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
 
         try {
             let response = await fetch(nUrl, {
                 method: 'POST',
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                },
+                headers: headers,
                 body: JSON.stringify(body),
-                cache: "no-cache",
-                credentials: "same-origin",
-                redirect: "follow",
             });
 
             if (!response.ok) {
@@ -184,19 +172,13 @@ if (!ext) {
                 console.error(`HTTP 请求失败，状态码：${response.status}`, response_data);
                 return null;
             } else {
-                // console.info("HTTP 请求成功：", apipath);
                 return await response.json();
             }
         } catch (error) {
-            console.error('HTTP 请求失败', error, " API: ", apipath);
+            console.error('HTTP 请求失败', error, " API: ", apiPath);
             return null;
         }
     }
-
-
-
-
-
 
     // 这个东西用不用的上待议
     // 似乎可以用于实现白名单
