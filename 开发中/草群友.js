@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         草群友
 // @author       暮星、米线、某人
-// @version      1.2.0
+// @version      1.2.1
 // @Stage        impact，启动！一！Usage：草群友@xxx | .草群友 help
 // @timestamp    0
 // @license      MIT
@@ -308,10 +308,6 @@ if (!ext) {
                     semenIn_today: 0, // 今日被灌注精华量 (ml, 2)
                     comaTimer: 0, // 草晕计数器
                     isComa: false // 是否被草昏
-                };
-                if (!tmpTargetUser.comaTimer) {
-                    // 临时处理措施，在下个大版本移除
-                    tmpTargetUser.comaTimer = 0;
                 };
                 mergeUserData(fuckStorage, mctx, defaultBeFuckedStorage);
                 tmpTargetUser = fuckStorage[targetUserId];
