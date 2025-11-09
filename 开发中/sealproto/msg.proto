@@ -1,4 +1,3 @@
-{
 syntax = "proto2";
 
 message AnonymousGroupMsg {
@@ -228,7 +227,7 @@ message ElemFlags2 {
   optional PcSupportDef pcSupportDef = 13;
   optional uint32 crmFlags = 14;
 
-  message Inst {  
+  message Inst {
     optional uint32 appId = 1;
     optional uint32 instId = 2;
   }
@@ -263,11 +262,11 @@ message FunFace {
   optional Turntable turntable = 1;
   optional Bomb bomb = 2;
 
-  message Bomb {  
+  message Bomb {
     optional bool burst = 1;
   }
 
-  message Turntable {  
+  message Turntable {
     repeated uint64 uinList = 1;
     optional uint64 hitUin = 2;
     optional string hitUinNick = 3;
@@ -657,7 +656,7 @@ message SourceMsg {
 }
 
 message Text {
-  optional bytes  = 1;
+  optional bytes  unknown = 1;
   optional string link = 2;
   optional bytes attr_6Buf = 3;
   optional bytes attr_7Buf = 4;
@@ -724,6 +723,4 @@ message VideoFile {
 message WorkflowNotifyMsg {
   optional bytes extMsg = 1;
   optional uint64 createUin = 2;
-}
-
 }

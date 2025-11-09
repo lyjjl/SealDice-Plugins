@@ -144,8 +144,8 @@ if (!ext) {
 
     /**
      * 向 NapCat API 发起 POST 请求。
-     * @param {string} baseurl - HTTP 服务器的 URL（会自动标准化）
-     * @param {string} apipath - API 的路径。
+     * @param {string} baseUrl - HTTP 服务器的 URL（会自动标准化）
+     * @param {string} apiPath - API 的路径。
      * @param {object} body - 请求体，将被 JSON.stringify 转换。
      * @returns {Promise<object|null>} 请求成功则返回解析后的 JSON 响应数据，失败则返回 null。
      */

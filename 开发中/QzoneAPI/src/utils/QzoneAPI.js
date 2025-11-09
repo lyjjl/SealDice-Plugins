@@ -20,7 +20,7 @@ class QzoneAPI {
     static ZONE_LIST_URL = "https://user.qzone.qq.com/proxy/domain/ic2.qzone.qq.com/cgi-bin/feeds/feeds3_html_more"
 
     /**
-     * @param {Object} cookiesDict - 包含 QQ 空间登录信息的 Cookie 字典
+     * @param {Object} cookiesDict - 包含 QQ 空间登录信息的 Cookie 字典 {p_skey: *}
      * @param uin - Bot QQ号
      */
     constructor(cookiesDict = {}, uin) {
@@ -38,7 +38,7 @@ class QzoneAPI {
 
     /**
      * 发送带 cookies 的异步请求，使用 Fetch API。
-     * * @param {string} method - HTTP 方法 (GET, POST)。
+     * @param {string} method - HTTP 方法 (GET, POST)。
      * @param {string} url - 请求 URL。
      * @param {Object} [params={}] - URL 查询参数。
      * @param {Object} [data={}] - POST 表单数据 (作为 URLSearchParams 或 FormData)。

@@ -1,0 +1,2455 @@
+{
+  "nested": {
+    "AnonymousGroupMsg": {
+      "edition": "proto2",
+      "fields": {
+        "flags": {
+          "type": "uint32",
+          "id": 1
+        },
+        "anonId": {
+          "type": "bytes",
+          "id": 2
+        },
+        "anonNick": {
+          "type": "bytes",
+          "id": 3
+        },
+        "headPortrait": {
+          "type": "uint32",
+          "id": 4
+        },
+        "expireTime": {
+          "type": "uint32",
+          "id": 5
+        },
+        "bubbleId": {
+          "type": "uint32",
+          "id": 6
+        },
+        "rankColor": {
+          "type": "bytes",
+          "id": 7
+        }
+      }
+    },
+    "ApolloActMsg": {
+      "edition": "proto2",
+      "fields": {
+        "actionId": {
+          "type": "uint32",
+          "id": 1
+        },
+        "actionName": {
+          "type": "bytes",
+          "id": 2
+        },
+        "actionText": {
+          "type": "bytes",
+          "id": 3
+        },
+        "flag": {
+          "type": "uint32",
+          "id": 4
+        },
+        "peerUin": {
+          "type": "uint32",
+          "id": 5
+        },
+        "senderTs": {
+          "type": "uint32",
+          "id": 6
+        },
+        "peerTs": {
+          "type": "uint32",
+          "id": 7
+        },
+        "senderStatus": {
+          "type": "int32",
+          "id": 8
+        },
+        "peerStatus": {
+          "type": "int32",
+          "id": 9
+        },
+        "diytextId": {
+          "type": "uint32",
+          "id": 10
+        },
+        "diytextContent": {
+          "type": "bytes",
+          "id": 11
+        },
+        "inputText": {
+          "type": "bytes",
+          "id": 12
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 13
+        }
+      }
+    },
+    "ArkAppElem": {
+      "edition": "proto2",
+      "fields": {
+        "appName": {
+          "type": "string",
+          "id": 1
+        },
+        "minVersion": {
+          "type": "string",
+          "id": 2
+        },
+        "xmlTemplate": {
+          "type": "string",
+          "id": 3
+        },
+        "data": {
+          "type": "bytes",
+          "id": 4
+        }
+      }
+    },
+    "Attr": {
+      "edition": "proto2",
+      "fields": {
+        "codePage": {
+          "type": "sint32",
+          "id": 1
+        },
+        "time": {
+          "type": "uint32",
+          "id": 2
+        },
+        "random": {
+          "type": "uint32",
+          "id": 3
+        },
+        "color": {
+          "type": "uint32",
+          "id": 4
+        },
+        "size": {
+          "type": "uint32",
+          "id": 5
+        },
+        "effect": {
+          "type": "uint32",
+          "id": 6
+        },
+        "charSet": {
+          "type": "uint32",
+          "id": 7
+        },
+        "pitchAndFamily": {
+          "type": "uint32",
+          "id": 8
+        },
+        "fontName": {
+          "type": "string",
+          "id": 9
+        },
+        "reserveData": {
+          "type": "bytes",
+          "id": 10
+        }
+      }
+    },
+    "BitAppMsg": {
+      "edition": "proto2",
+      "fields": {
+        "buf": {
+          "type": "bytes",
+          "id": 1
+        }
+      }
+    },
+    "BlessingMessage": {
+      "edition": "proto2",
+      "fields": {
+        "msgType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "exFlag": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "CommonElem": {
+      "edition": "proto2",
+      "fields": {
+        "serviceType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "pbElem": {
+          "type": "bytes",
+          "id": 2
+        },
+        "businessType": {
+          "type": "uint32",
+          "id": 3
+        }
+      }
+    },
+    "ConferenceTipsInfo": {
+      "edition": "proto2",
+      "fields": {
+        "sessionType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "sessionUin": {
+          "type": "uint64",
+          "id": 2
+        },
+        "text": {
+          "type": "string",
+          "id": 3
+        }
+      }
+    },
+    "CrmElem": {
+      "edition": "proto2",
+      "fields": {
+        "crmBuf": {
+          "type": "bytes",
+          "id": 1
+        },
+        "msgResid": {
+          "type": "bytes",
+          "id": 2
+        },
+        "qidianFlag": {
+          "type": "uint32",
+          "id": 3
+        },
+        "pushFlag": {
+          "type": "uint32",
+          "id": 4
+        },
+        "countFlag": {
+          "type": "uint32",
+          "id": 5
+        }
+      }
+    },
+    "CustomElem": {
+      "edition": "proto2",
+      "fields": {
+        "desc": {
+          "type": "bytes",
+          "id": 1
+        },
+        "data": {
+          "type": "bytes",
+          "id": 2
+        },
+        "enumType": {
+          "type": "uint32",
+          "id": 3
+        },
+        "ext": {
+          "type": "bytes",
+          "id": 4
+        },
+        "sound": {
+          "type": "bytes",
+          "id": 5
+        }
+      }
+    },
+    "CustomFace": {
+      "edition": "proto2",
+      "fields": {
+        "guid": {
+          "type": "bytes",
+          "id": 1
+        },
+        "filePath": {
+          "type": "string",
+          "id": 2
+        },
+        "shortcut": {
+          "type": "string",
+          "id": 3
+        },
+        "buffer": {
+          "type": "bytes",
+          "id": 4
+        },
+        "flag": {
+          "type": "bytes",
+          "id": 5
+        },
+        "oldData": {
+          "type": "bytes",
+          "id": 6
+        },
+        "fileId": {
+          "type": "uint32",
+          "id": 7
+        },
+        "serverIp": {
+          "type": "uint32",
+          "id": 8
+        },
+        "serverPort": {
+          "type": "uint32",
+          "id": 9
+        },
+        "fileType": {
+          "type": "uint32",
+          "id": 10
+        },
+        "signature": {
+          "type": "bytes",
+          "id": 11
+        },
+        "useful": {
+          "type": "uint32",
+          "id": 12
+        },
+        "md5": {
+          "type": "bytes",
+          "id": 13
+        },
+        "thumbUrl": {
+          "type": "string",
+          "id": 14
+        },
+        "bigUrl": {
+          "type": "string",
+          "id": 15
+        },
+        "origUrl": {
+          "type": "string",
+          "id": 16
+        },
+        "bizType": {
+          "type": "uint32",
+          "id": 17
+        },
+        "repeatIndex": {
+          "type": "uint32",
+          "id": 18
+        },
+        "repeatImage": {
+          "type": "uint32",
+          "id": 19
+        },
+        "imageType": {
+          "type": "uint32",
+          "id": 20
+        },
+        "index": {
+          "type": "uint32",
+          "id": 21
+        },
+        "width": {
+          "type": "uint32",
+          "id": 22
+        },
+        "height": {
+          "type": "uint32",
+          "id": 23
+        },
+        "source": {
+          "type": "uint32",
+          "id": 24
+        },
+        "size": {
+          "type": "uint32",
+          "id": 25
+        },
+        "origin": {
+          "type": "uint32",
+          "id": 26
+        },
+        "thumbWidth": {
+          "type": "uint32",
+          "id": 27
+        },
+        "thumbHeight": {
+          "type": "uint32",
+          "id": 28
+        },
+        "showLen": {
+          "type": "uint32",
+          "id": 29
+        },
+        "downloadLen": {
+          "type": "uint32",
+          "id": 30
+        },
+        "_400Url": {
+          "type": "string",
+          "id": 31
+        },
+        "_400Width": {
+          "type": "uint32",
+          "id": 32
+        },
+        "_400Height": {
+          "type": "uint32",
+          "id": 33
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 34
+        }
+      }
+    },
+    "DeliverGiftMsg": {
+      "edition": "proto2",
+      "fields": {
+        "grayTipContent": {
+          "type": "bytes",
+          "id": 1
+        },
+        "animationPackageId": {
+          "type": "uint32",
+          "id": 2
+        },
+        "animationPackageUrlA": {
+          "type": "bytes",
+          "id": 3
+        },
+        "animationPackageUrlI": {
+          "type": "bytes",
+          "id": 4
+        },
+        "remindBrief": {
+          "type": "bytes",
+          "id": 5
+        },
+        "giftId": {
+          "type": "uint32",
+          "id": 6
+        },
+        "giftCount": {
+          "type": "uint32",
+          "id": 7
+        },
+        "animationBrief": {
+          "type": "bytes",
+          "id": 8
+        },
+        "senderUin": {
+          "type": "uint64",
+          "id": 9
+        },
+        "receiverUin": {
+          "type": "uint64",
+          "id": 10
+        },
+        "stmessageTitle": {
+          "type": "bytes",
+          "id": 11
+        },
+        "stmessageSubtitle": {
+          "type": "bytes",
+          "id": 12
+        },
+        "stmessageMessage": {
+          "type": "bytes",
+          "id": 13
+        },
+        "stmessageGiftpicid": {
+          "type": "uint32",
+          "id": 14
+        },
+        "stmessageComefrom": {
+          "type": "bytes",
+          "id": 15
+        },
+        "stmessageExflag": {
+          "type": "uint32",
+          "id": 16
+        },
+        "toAllGiftId": {
+          "type": "bytes",
+          "id": 17
+        },
+        "comefromLink": {
+          "type": "bytes",
+          "id": 18
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 19
+        },
+        "receiverName": {
+          "type": "bytes",
+          "id": 20
+        },
+        "receiverPic": {
+          "type": "bytes",
+          "id": 21
+        },
+        "stmessageGifturl": {
+          "type": "bytes",
+          "id": 22
+        }
+      }
+    },
+    "EIMInfo": {
+      "edition": "proto2",
+      "fields": {
+        "rootId": {
+          "type": "uint64",
+          "id": 1
+        },
+        "flag": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "Elem": {
+      "edition": "proto2",
+      "fields": {
+        "text": {
+          "type": "Text",
+          "id": 1
+        },
+        "face": {
+          "type": "Face",
+          "id": 2
+        },
+        "onlineImage": {
+          "type": "OnlineImage",
+          "id": 3
+        },
+        "notOnlineImage": {
+          "type": "NotOnlineImage",
+          "id": 4
+        },
+        "transElemInfo": {
+          "type": "TransElem",
+          "id": 5
+        },
+        "marketFace": {
+          "type": "MarketFace",
+          "id": 6
+        },
+        "elemFlags": {
+          "type": "ElemFlags",
+          "id": 7
+        },
+        "customFace": {
+          "type": "CustomFace",
+          "id": 8
+        },
+        "elemFlags2": {
+          "type": "ElemFlags2",
+          "id": 9
+        },
+        "funFace": {
+          "type": "FunFace",
+          "id": 10
+        },
+        "secretFile": {
+          "type": "SecretFileMsg",
+          "id": 11
+        },
+        "richMsg": {
+          "type": "RichMsg",
+          "id": 12
+        },
+        "groupFile": {
+          "type": "GroupFile",
+          "id": 13
+        },
+        "pubGroup": {
+          "type": "PubGroup",
+          "id": 14
+        },
+        "marketTrans": {
+          "type": "MarketTrans",
+          "id": 15
+        },
+        "extraInfo": {
+          "type": "ExtraInfo",
+          "id": 16
+        },
+        "shakeWindow": {
+          "type": "ShakeWindow",
+          "id": 17
+        },
+        "pubAccount": {
+          "type": "PubAccount",
+          "id": 18
+        },
+        "videoFile": {
+          "type": "VideoFile",
+          "id": 19
+        },
+        "tipsInfo": {
+          "type": "TipsInfo",
+          "id": 20
+        },
+        "anonGroupMsg": {
+          "type": "AnonymousGroupMsg",
+          "id": 21
+        },
+        "qqLiveOld": {
+          "type": "QQLiveOld",
+          "id": 22
+        },
+        "lifeOnline": {
+          "type": "LifeOnlineAccount",
+          "id": 23
+        },
+        "qqwalletMsg": {
+          "type": "QQWalletMsg",
+          "id": 24
+        },
+        "crmElem": {
+          "type": "CrmElem",
+          "id": 25
+        },
+        "conferenceTipsInfo": {
+          "type": "ConferenceTipsInfo",
+          "id": 26
+        },
+        "redbagInfo": {
+          "type": "RedBagInfo",
+          "id": 27
+        },
+        "lowVersionTips": {
+          "type": "LowVersionTips",
+          "id": 28
+        },
+        "bankcodeCtrlInfo": {
+          "type": "bytes",
+          "id": 29
+        },
+        "nearByMsg": {
+          "type": "NearByMessageType",
+          "id": 30
+        },
+        "customElem": {
+          "type": "CustomElem",
+          "id": 31
+        },
+        "locationInfo": {
+          "type": "LocationInfo",
+          "id": 32
+        },
+        "pubAccInfo": {
+          "type": "PubAccInfo",
+          "id": 33
+        },
+        "smallEmoji": {
+          "type": "SmallEmoji",
+          "id": 34
+        },
+        "fsjMsgElem": {
+          "type": "FSJMessageElem",
+          "id": 35
+        },
+        "arkApp": {
+          "type": "ArkAppElem",
+          "id": 36
+        },
+        "generalFlags": {
+          "type": "GeneralFlags",
+          "id": 37
+        },
+        "hcFlashPic": {
+          "type": "CustomFace",
+          "id": 38
+        },
+        "deliverGiftMsg": {
+          "type": "DeliverGiftMsg",
+          "id": 39
+        },
+        "bitappMsg": {
+          "type": "BitAppMsg",
+          "id": 40
+        },
+        "openQqData": {
+          "type": "OpenQQData",
+          "id": 41
+        },
+        "apolloMsg": {
+          "type": "ApolloActMsg",
+          "id": 42
+        },
+        "groupPubAccInfo": {
+          "type": "GroupPubAccountInfo",
+          "id": 43
+        },
+        "blessMsg": {
+          "type": "BlessingMessage",
+          "id": 44
+        },
+        "srcMsg": {
+          "type": "SourceMsg",
+          "id": 45
+        },
+        "lolaMsg": {
+          "type": "LolaMsg",
+          "id": 46
+        },
+        "groupBusinessMsg": {
+          "type": "GroupBusinessMsg",
+          "id": 47
+        },
+        "workflowNotify": {
+          "type": "WorkflowNotifyMsg",
+          "id": 48
+        },
+        "patElem": {
+          "type": "PatsElem",
+          "id": 49
+        },
+        "groupPostElem": {
+          "type": "GroupPostElem",
+          "id": 50
+        },
+        "lightApp": {
+          "type": "LightAppElem",
+          "id": 51
+        },
+        "eimInfo": {
+          "type": "EIMInfo",
+          "id": 52
+        },
+        "commonElem": {
+          "type": "CommonElem",
+          "id": 53
+        }
+      }
+    },
+    "ElemFlags": {
+      "edition": "proto2",
+      "fields": {
+        "flags1": {
+          "type": "bytes",
+          "id": 1
+        },
+        "businessData": {
+          "type": "bytes",
+          "id": 2
+        }
+      }
+    },
+    "ElemFlags2": {
+      "edition": "proto2",
+      "fields": {
+        "colorTextId": {
+          "type": "uint32",
+          "id": 1
+        },
+        "msgId": {
+          "type": "uint64",
+          "id": 2
+        },
+        "whisperSessionId": {
+          "type": "uint32",
+          "id": 3
+        },
+        "pttChangeBit": {
+          "type": "uint32",
+          "id": 4
+        },
+        "vipStatus": {
+          "type": "uint32",
+          "id": 5
+        },
+        "compatibleId": {
+          "type": "uint32",
+          "id": 6
+        },
+        "insts": {
+          "rule": "repeated",
+          "type": "Inst",
+          "id": 7
+        },
+        "msgRptCnt": {
+          "type": "uint32",
+          "id": 8
+        },
+        "srcInst": {
+          "type": "Inst",
+          "id": 9
+        },
+        "longtitude": {
+          "type": "uint32",
+          "id": 10
+        },
+        "latitude": {
+          "type": "uint32",
+          "id": 11
+        },
+        "customFont": {
+          "type": "uint32",
+          "id": 12
+        },
+        "pcSupportDef": {
+          "type": "PcSupportDef",
+          "id": 13
+        },
+        "crmFlags": {
+          "type": "uint32",
+          "id": 14
+        }
+      },
+      "nested": {
+        "Inst": {
+          "fields": {
+            "appId": {
+              "type": "uint32",
+              "id": 1
+            },
+            "instId": {
+              "type": "uint32",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "ExtraInfo": {
+      "edition": "proto2",
+      "fields": {
+        "nick": {
+          "type": "bytes",
+          "id": 1
+        },
+        "groupCard": {
+          "type": "bytes",
+          "id": 2
+        },
+        "level": {
+          "type": "uint32",
+          "id": 3
+        },
+        "flags": {
+          "type": "uint32",
+          "id": 4
+        },
+        "groupMask": {
+          "type": "uint32",
+          "id": 5
+        },
+        "msgTailId": {
+          "type": "uint32",
+          "id": 6
+        },
+        "senderTitle": {
+          "type": "bytes",
+          "id": 7
+        },
+        "apnsTips": {
+          "type": "bytes",
+          "id": 8
+        },
+        "uin": {
+          "type": "uint64",
+          "id": 9
+        },
+        "msgStateFlag": {
+          "type": "uint32",
+          "id": 10
+        },
+        "apnsSoundType": {
+          "type": "uint32",
+          "id": 11
+        },
+        "newGroupFlag": {
+          "type": "uint32",
+          "id": 12
+        }
+      }
+    },
+    "FSJMessageElem": {
+      "edition": "proto2",
+      "fields": {
+        "msgType": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "Face": {
+      "edition": "proto2",
+      "fields": {
+        "index": {
+          "type": "uint32",
+          "id": 1
+        },
+        "old": {
+          "type": "bytes",
+          "id": 2
+        },
+        "buf": {
+          "type": "bytes",
+          "id": 11
+        }
+      }
+    },
+    "FunFace": {
+      "edition": "proto2",
+      "fields": {
+        "turntable": {
+          "type": "Turntable",
+          "id": 1
+        },
+        "bomb": {
+          "type": "Bomb",
+          "id": 2
+        }
+      },
+      "nested": {
+        "Bomb": {
+          "fields": {
+            "burst": {
+              "type": "bool",
+              "id": 1
+            }
+          }
+        },
+        "Turntable": {
+          "fields": {
+            "uinList": {
+              "rule": "repeated",
+              "type": "uint64",
+              "id": 1
+            },
+            "hitUin": {
+              "type": "uint64",
+              "id": 2
+            },
+            "hitUinNick": {
+              "type": "string",
+              "id": 3
+            }
+          }
+        }
+      }
+    },
+    "GeneralFlags": {
+      "edition": "proto2",
+      "fields": {
+        "bubbleDiyTextId": {
+          "type": "uint32",
+          "id": 1
+        },
+        "groupFlagNew": {
+          "type": "uint32",
+          "id": 2
+        },
+        "uin": {
+          "type": "uint64",
+          "id": 3
+        },
+        "rpId": {
+          "type": "bytes",
+          "id": 4
+        },
+        "prpFold": {
+          "type": "uint32",
+          "id": 5
+        },
+        "longTextFlag": {
+          "type": "uint32",
+          "id": 6
+        },
+        "longTextResid": {
+          "type": "bytes",
+          "id": 7
+        },
+        "groupType": {
+          "type": "uint32",
+          "id": 8
+        },
+        "toUinFlag": {
+          "type": "uint32",
+          "id": 9
+        },
+        "glamourLevel": {
+          "type": "uint32",
+          "id": 10
+        },
+        "memberLevel": {
+          "type": "uint32",
+          "id": 11
+        },
+        "groupRankSeq": {
+          "type": "uint64",
+          "id": 12
+        },
+        "olympicTorch": {
+          "type": "uint32",
+          "id": 13
+        },
+        "babyqGuideMsgCookie": {
+          "type": "bytes",
+          "id": 14
+        },
+        "uin32ExpertFlag": {
+          "type": "uint32",
+          "id": 15
+        },
+        "bubbleSubId": {
+          "type": "uint32",
+          "id": 16
+        },
+        "pendantId": {
+          "type": "uint64",
+          "id": 17
+        },
+        "rpIndex": {
+          "type": "bytes",
+          "id": 18
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 19
+        }
+      }
+    },
+    "GroupBusinessMsg": {
+      "edition": "proto2",
+      "fields": {
+        "flags": {
+          "type": "uint32",
+          "id": 1
+        },
+        "headUrl": {
+          "type": "bytes",
+          "id": 2
+        },
+        "headClkUrl": {
+          "type": "bytes",
+          "id": 3
+        },
+        "nick": {
+          "type": "bytes",
+          "id": 4
+        },
+        "nickColor": {
+          "type": "bytes",
+          "id": 5
+        },
+        "rank": {
+          "type": "bytes",
+          "id": 6
+        },
+        "rankColor": {
+          "type": "bytes",
+          "id": 7
+        },
+        "rankBgcolor": {
+          "type": "bytes",
+          "id": 8
+        }
+      }
+    },
+    "GroupFile": {
+      "edition": "proto2",
+      "fields": {
+        "filename": {
+          "type": "bytes",
+          "id": 1
+        },
+        "fileSize": {
+          "type": "uint64",
+          "id": 2
+        },
+        "fileId": {
+          "type": "bytes",
+          "id": 3
+        },
+        "batchId": {
+          "type": "bytes",
+          "id": 4
+        },
+        "fileKey": {
+          "type": "bytes",
+          "id": 5
+        },
+        "mark": {
+          "type": "bytes",
+          "id": 6
+        },
+        "sequence": {
+          "type": "uint64",
+          "id": 7
+        },
+        "batchItemId": {
+          "type": "bytes",
+          "id": 8
+        },
+        "feedMsgTime": {
+          "type": "uint32",
+          "id": 9
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 10
+        }
+      }
+    },
+    "GroupPostElem": {
+      "edition": "proto2",
+      "fields": {
+        "transType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "transMsg": {
+          "type": "bytes",
+          "id": 2
+        }
+      }
+    },
+    "GroupPubAccountInfo": {
+      "edition": "proto2",
+      "fields": {
+        "pubAccount": {
+          "type": "uint64",
+          "id": 1
+        }
+      }
+    },
+    "LifeOnlineAccount": {
+      "edition": "proto2",
+      "fields": {
+        "uniqueId": {
+          "type": "uint64",
+          "id": 1
+        },
+        "op": {
+          "type": "uint32",
+          "id": 2
+        },
+        "showTime": {
+          "type": "uint32",
+          "id": 3
+        },
+        "report": {
+          "type": "uint32",
+          "id": 4
+        },
+        "ack": {
+          "type": "uint32",
+          "id": 5
+        },
+        "bitmap": {
+          "type": "uint64",
+          "id": 6
+        },
+        "gdtImpData": {
+          "type": "bytes",
+          "id": 7
+        },
+        "gdtCliData": {
+          "type": "bytes",
+          "id": 8
+        },
+        "viewId": {
+          "type": "bytes",
+          "id": 9
+        }
+      }
+    },
+    "LightAppElem": {
+      "edition": "proto2",
+      "fields": {
+        "data": {
+          "type": "bytes",
+          "id": 1
+        },
+        "msgResid": {
+          "type": "bytes",
+          "id": 2
+        }
+      }
+    },
+    "LocationInfo": {
+      "edition": "proto2",
+      "fields": {
+        "longitude": {
+          "type": "double",
+          "id": 1
+        },
+        "latitude": {
+          "type": "double",
+          "id": 2
+        },
+        "desc": {
+          "type": "bytes",
+          "id": 3
+        }
+      }
+    },
+    "LolaMsg": {
+      "edition": "proto2",
+      "fields": {
+        "msgResid": {
+          "type": "bytes",
+          "id": 1
+        },
+        "encodeContent": {
+          "type": "bytes",
+          "id": 2
+        },
+        "longMsgUrl": {
+          "type": "bytes",
+          "id": 3
+        },
+        "downloadKey": {
+          "type": "bytes",
+          "id": 4
+        }
+      }
+    },
+    "LowVersionTips": {
+      "edition": "proto2",
+      "fields": {
+        "businessId": {
+          "type": "uint32",
+          "id": 1
+        },
+        "sessionType": {
+          "type": "uint32",
+          "id": 2
+        },
+        "sessionUin": {
+          "type": "uint64",
+          "id": 3
+        },
+        "senderUin": {
+          "type": "uint64",
+          "id": 4
+        },
+        "text": {
+          "type": "string",
+          "id": 5
+        }
+      }
+    },
+    "MarketFace": {
+      "edition": "proto2",
+      "fields": {
+        "faceName": {
+          "type": "bytes",
+          "id": 1
+        },
+        "itemType": {
+          "type": "uint32",
+          "id": 2
+        },
+        "faceInfo": {
+          "type": "uint32",
+          "id": 3
+        },
+        "faceId": {
+          "type": "bytes",
+          "id": 4
+        },
+        "tabId": {
+          "type": "uint32",
+          "id": 5
+        },
+        "subType": {
+          "type": "uint32",
+          "id": 6
+        },
+        "key": {
+          "type": "bytes",
+          "id": 7
+        },
+        "param": {
+          "type": "bytes",
+          "id": 8
+        },
+        "mediaType": {
+          "type": "uint32",
+          "id": 9
+        },
+        "imageWidth": {
+          "type": "uint32",
+          "id": 10
+        },
+        "imageHeight": {
+          "type": "uint32",
+          "id": 11
+        },
+        "mobileparam": {
+          "type": "bytes",
+          "id": 12
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 13
+        }
+      }
+    },
+    "MarketTrans": {
+      "edition": "proto2",
+      "fields": {
+        "flag": {
+          "type": "int32",
+          "id": 1
+        },
+        "xml": {
+          "type": "bytes",
+          "id": 2
+        },
+        "msgResid": {
+          "type": "bytes",
+          "id": 3
+        },
+        "ability": {
+          "type": "uint32",
+          "id": 4
+        },
+        "minAbility": {
+          "type": "uint32",
+          "id": 5
+        }
+      }
+    },
+    "MsgBody": {
+      "edition": "proto2",
+      "fields": {
+        "richText": {
+          "type": "RichText",
+          "id": 1
+        },
+        "content": {
+          "type": "bytes",
+          "id": 2
+        },
+        "encryptContent": {
+          "type": "bytes",
+          "id": 3
+        }
+      }
+    },
+    "MsgBody_subtype4": {
+      "edition": "proto2",
+      "fields": {
+        "notOnlineFile": {
+          "type": "NotOnlineFile",
+          "id": 1
+        },
+        "msgTime": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "NearByMessageType": {
+      "edition": "proto2",
+      "fields": {
+        "type": {
+          "type": "uint32",
+          "id": 1
+        },
+        "identifyType": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "NotOnlineFile": {
+      "edition": "proto2",
+      "fields": {
+        "fileType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "sig": {
+          "type": "bytes",
+          "id": 2
+        },
+        "fileUuid": {
+          "type": "bytes",
+          "id": 3
+        },
+        "fileMd5": {
+          "type": "bytes",
+          "id": 4
+        },
+        "fileName": {
+          "type": "bytes",
+          "id": 5
+        },
+        "fileSize": {
+          "type": "uint64",
+          "id": 6
+        },
+        "note": {
+          "type": "bytes",
+          "id": 7
+        },
+        "reserved": {
+          "type": "uint32",
+          "id": 8
+        },
+        "subcmd": {
+          "type": "uint32",
+          "id": 9
+        },
+        "microCloud": {
+          "type": "uint32",
+          "id": 10
+        },
+        "fileUrls": {
+          "rule": "repeated",
+          "type": "bytes",
+          "id": 11
+        },
+        "downloadFlag": {
+          "type": "uint32",
+          "id": 12
+        },
+        "dangerEvel": {
+          "type": "uint32",
+          "id": 50
+        },
+        "lifeTime": {
+          "type": "uint32",
+          "id": 51
+        },
+        "uploadTime": {
+          "type": "uint32",
+          "id": 52
+        },
+        "absFileType": {
+          "type": "uint32",
+          "id": 53
+        },
+        "clientType": {
+          "type": "uint32",
+          "id": 54
+        },
+        "expireTime": {
+          "type": "uint32",
+          "id": 55
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 56
+        },
+        "fileidcrcMedia": {
+          "type": "string",
+          "id": 57
+        }
+      }
+    },
+    "NotOnlineImage": {
+      "edition": "proto2",
+      "fields": {
+        "filePath": {
+          "type": "bytes",
+          "id": 1
+        },
+        "fileLen": {
+          "type": "uint32",
+          "id": 2
+        },
+        "downloadPath": {
+          "type": "bytes",
+          "id": 3
+        },
+        "oldVerSendFile": {
+          "type": "bytes",
+          "id": 4
+        },
+        "imgType": {
+          "type": "uint32",
+          "id": 5
+        },
+        "previewsImage": {
+          "type": "bytes",
+          "id": 6
+        },
+        "picMd5": {
+          "type": "bytes",
+          "id": 7
+        },
+        "picHeight": {
+          "type": "uint32",
+          "id": 8
+        },
+        "picWidth": {
+          "type": "uint32",
+          "id": 9
+        },
+        "resId": {
+          "type": "bytes",
+          "id": 10
+        },
+        "flag": {
+          "type": "bytes",
+          "id": 11
+        },
+        "thumbUrl": {
+          "type": "string",
+          "id": 12
+        },
+        "original": {
+          "type": "uint32",
+          "id": 13
+        },
+        "bigUrl": {
+          "type": "string",
+          "id": 14
+        },
+        "origUrl": {
+          "type": "string",
+          "id": 15
+        },
+        "bizType": {
+          "type": "uint32",
+          "id": 16
+        },
+        "result": {
+          "type": "uint32",
+          "id": 17
+        },
+        "index": {
+          "type": "uint32",
+          "id": 18
+        },
+        "opFaceBuf": {
+          "type": "bytes",
+          "id": 19
+        },
+        "oldPicMd5": {
+          "type": "bool",
+          "id": 20
+        },
+        "thumbWidth": {
+          "type": "uint32",
+          "id": 21
+        },
+        "thumbHeight": {
+          "type": "uint32",
+          "id": 22
+        },
+        "fileId": {
+          "type": "uint32",
+          "id": 23
+        },
+        "showLen": {
+          "type": "uint32",
+          "id": 24
+        },
+        "downloadLen": {
+          "type": "uint32",
+          "id": 25
+        },
+        "_400Url": {
+          "type": "string",
+          "id": 26
+        },
+        "_400Width": {
+          "type": "uint32",
+          "id": 27
+        },
+        "_400Height": {
+          "type": "uint32",
+          "id": 28
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 29
+        }
+      }
+    },
+    "OnlineImage": {
+      "edition": "proto2",
+      "fields": {
+        "guid": {
+          "type": "bytes",
+          "id": 1
+        },
+        "filePath": {
+          "type": "bytes",
+          "id": 2
+        },
+        "oldVerSendFile": {
+          "type": "bytes",
+          "id": 3
+        }
+      }
+    },
+    "OpenQQData": {
+      "edition": "proto2",
+      "fields": {
+        "carQqData": {
+          "type": "bytes",
+          "id": 1
+        }
+      }
+    },
+    "PatsElem": {
+      "edition": "proto2",
+      "fields": {
+        "patType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "patCount": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "PcSupportDef": {
+      "edition": "proto2",
+      "fields": {
+        "pcPtlBegin": {
+          "type": "uint32",
+          "id": 1
+        },
+        "pcPtlEnd": {
+          "type": "uint32",
+          "id": 2
+        },
+        "macPtlBegin": {
+          "type": "uint32",
+          "id": 3
+        },
+        "macPtlEnd": {
+          "type": "uint32",
+          "id": 4
+        },
+        "ptlsSupport": {
+          "rule": "repeated",
+          "type": "uint32",
+          "id": 5
+        },
+        "ptlsNotSupport": {
+          "rule": "repeated",
+          "type": "uint32",
+          "id": 6
+        }
+      }
+    },
+    "Ptt": {
+      "edition": "proto2",
+      "fields": {
+        "fileType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "srcUin": {
+          "type": "uint64",
+          "id": 2
+        },
+        "fileUuid": {
+          "type": "bytes",
+          "id": 3
+        },
+        "fileMd5": {
+          "type": "bytes",
+          "id": 4
+        },
+        "fileName": {
+          "type": "bytes",
+          "id": 5
+        },
+        "fileSize": {
+          "type": "uint32",
+          "id": 6
+        },
+        "reserve": {
+          "type": "bytes",
+          "id": 7
+        },
+        "fileId": {
+          "type": "uint32",
+          "id": 8
+        },
+        "serverIp": {
+          "type": "uint32",
+          "id": 9
+        },
+        "serverPort": {
+          "type": "uint32",
+          "id": 10
+        },
+        "valid": {
+          "type": "bool",
+          "id": 11
+        },
+        "signature": {
+          "type": "bytes",
+          "id": 12
+        },
+        "shortcut": {
+          "type": "bytes",
+          "id": 13
+        },
+        "fileKey": {
+          "type": "bytes",
+          "id": 14
+        },
+        "magicPttIndex": {
+          "type": "uint32",
+          "id": 15
+        },
+        "voiceSwitch": {
+          "type": "uint32",
+          "id": 16
+        },
+        "pttUrl": {
+          "type": "bytes",
+          "id": 17
+        },
+        "groupFileKey": {
+          "type": "bytes",
+          "id": 18
+        },
+        "time": {
+          "type": "uint32",
+          "id": 19
+        },
+        "downPara": {
+          "type": "bytes",
+          "id": 20
+        },
+        "format": {
+          "type": "uint32",
+          "id": 29
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 30
+        },
+        "pttUrls": {
+          "rule": "repeated",
+          "type": "bytes",
+          "id": 31
+        },
+        "downloadFlag": {
+          "type": "uint32",
+          "id": 32
+        }
+      }
+    },
+    "PubAccInfo": {
+      "edition": "proto2",
+      "fields": {
+        "isInterNum": {
+          "type": "uint32",
+          "id": 1
+        },
+        "msgTemplateId": {
+          "type": "string",
+          "id": 2
+        },
+        "longMsgUrl": {
+          "type": "string",
+          "id": 3
+        },
+        "downloadKey": {
+          "type": "bytes",
+          "id": 4
+        }
+      }
+    },
+    "PubAccount": {
+      "edition": "proto2",
+      "fields": {
+        "buf": {
+          "type": "bytes",
+          "id": 1
+        },
+        "pubAccountUin": {
+          "type": "uint64",
+          "id": 2
+        }
+      }
+    },
+    "PubGroup": {
+      "edition": "proto2",
+      "fields": {
+        "nickname": {
+          "type": "bytes",
+          "id": 1
+        },
+        "gender": {
+          "type": "uint32",
+          "id": 2
+        },
+        "age": {
+          "type": "uint32",
+          "id": 3
+        },
+        "distance": {
+          "type": "uint32",
+          "id": 4
+        }
+      }
+    },
+    "QQLiveOld": {
+      "edition": "proto2",
+      "fields": {
+        "subCmd": {
+          "type": "uint32",
+          "id": 1
+        },
+        "showText": {
+          "type": "bytes",
+          "id": 2
+        },
+        "param": {
+          "type": "bytes",
+          "id": 3
+        },
+        "introduce": {
+          "type": "bytes",
+          "id": 4
+        }
+      }
+    },
+    "QQWalletAioBody": {
+      "edition": "proto2",
+      "fields": {
+        "senduin": {
+          "type": "uint64",
+          "id": 1
+        },
+        "sender": {
+          "type": "QQWalletAioElem",
+          "id": 2
+        },
+        "receiver": {
+          "type": "QQWalletAioElem",
+          "id": 3
+        },
+        "channelid": {
+          "type": "sint32",
+          "id": 4
+        },
+        "templateid": {
+          "type": "sint32",
+          "id": 5
+        },
+        "resend": {
+          "type": "uint32",
+          "id": 6
+        },
+        "msgPriority": {
+          "type": "uint32",
+          "id": 7
+        },
+        "redtype": {
+          "type": "sint32",
+          "id": 8
+        },
+        "billno": {
+          "type": "bytes",
+          "id": 9
+        },
+        "authkey": {
+          "type": "bytes",
+          "id": 10
+        },
+        "sessiontype": {
+          "type": "sint32",
+          "id": 11
+        },
+        "msgtype": {
+          "type": "sint32",
+          "id": 12
+        },
+        "envelopeid": {
+          "type": "sint32",
+          "id": 13
+        },
+        "name": {
+          "type": "bytes",
+          "id": 14
+        },
+        "conftype": {
+          "type": "sint32",
+          "id": 15
+        },
+        "msgFrom": {
+          "type": "sint32",
+          "id": 16
+        },
+        "pcBody": {
+          "type": "bytes",
+          "id": 17
+        },
+        "index": {
+          "type": "bytes",
+          "id": 18
+        },
+        "redchannel": {
+          "type": "uint32",
+          "id": 19
+        },
+        "grapUin": {
+          "rule": "repeated",
+          "type": "uint64",
+          "id": 20
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 21
+        }
+      }
+    },
+    "QQWalletAioElem": {
+      "edition": "proto2",
+      "fields": {
+        "background": {
+          "type": "uint32",
+          "id": 1
+        },
+        "icon": {
+          "type": "uint32",
+          "id": 2
+        },
+        "title": {
+          "type": "bytes",
+          "id": 3
+        },
+        "subtitle": {
+          "type": "bytes",
+          "id": 4
+        },
+        "content": {
+          "type": "bytes",
+          "id": 5
+        },
+        "linkurl": {
+          "type": "bytes",
+          "id": 6
+        },
+        "blackstripe": {
+          "type": "bytes",
+          "id": 7
+        },
+        "notice": {
+          "type": "bytes",
+          "id": 8
+        },
+        "titleColor": {
+          "type": "uint32",
+          "id": 9
+        },
+        "subtitleColor": {
+          "type": "uint32",
+          "id": 10
+        },
+        "actionsPriority": {
+          "type": "bytes",
+          "id": 11
+        },
+        "jumpUrl": {
+          "type": "bytes",
+          "id": 12
+        },
+        "nativeIos": {
+          "type": "bytes",
+          "id": 13
+        },
+        "nativeAndroid": {
+          "type": "bytes",
+          "id": 14
+        },
+        "iconurl": {
+          "type": "bytes",
+          "id": 15
+        },
+        "contentColor": {
+          "type": "uint32",
+          "id": 16
+        },
+        "contentBgcolor": {
+          "type": "uint32",
+          "id": 17
+        },
+        "aioImageLeft": {
+          "type": "bytes",
+          "id": 18
+        },
+        "aioImageRight": {
+          "type": "bytes",
+          "id": 19
+        },
+        "cftImage": {
+          "type": "bytes",
+          "id": 20
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 21
+        }
+      }
+    },
+    "QQWalletMsg": {
+      "edition": "proto2",
+      "fields": {
+        "aioBody": {
+          "type": "QQWalletAioBody",
+          "id": 1
+        }
+      }
+    },
+    "RedBagInfo": {
+      "edition": "proto2",
+      "fields": {
+        "redbagType": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "RichMsg": {
+      "edition": "proto2",
+      "fields": {
+        "template_1": {
+          "type": "bytes",
+          "id": 1
+        },
+        "serviceId": {
+          "type": "uint32",
+          "id": 2
+        },
+        "msgResid": {
+          "type": "bytes",
+          "id": 3
+        },
+        "rand": {
+          "type": "uint32",
+          "id": 4
+        },
+        "seq": {
+          "type": "uint32",
+          "id": 5
+        },
+        "flags": {
+          "type": "uint32",
+          "id": 6
+        }
+      }
+    },
+    "RichText": {
+      "edition": "proto2",
+      "fields": {
+        "attr": {
+          "type": "Attr",
+          "id": 1
+        },
+        "elems": {
+          "rule": "repeated",
+          "type": "Elem",
+          "id": 2
+        },
+        "notOnlineFile": {
+          "type": "NotOnlineFile",
+          "id": 3
+        },
+        "ptt": {
+          "type": "Ptt",
+          "id": 4
+        },
+        "tmpPtt": {
+          "type": "TmpPtt",
+          "id": 5
+        },
+        "trans_211TmpMsg": {
+          "type": "Trans211TmpMsg",
+          "id": 6
+        }
+      }
+    },
+    "SecretFileMsg": {
+      "edition": "proto2",
+      "fields": {
+        "fileKey": {
+          "type": "bytes",
+          "id": 1
+        },
+        "fromUin": {
+          "type": "uint64",
+          "id": 2
+        },
+        "toUin": {
+          "type": "uint64",
+          "id": 3
+        },
+        "status": {
+          "type": "uint32",
+          "id": 4
+        },
+        "ttl": {
+          "type": "uint32",
+          "id": 5
+        },
+        "type": {
+          "type": "uint32",
+          "id": 6
+        },
+        "encryptPreheadLength": {
+          "type": "uint32",
+          "id": 7
+        },
+        "encryptType": {
+          "type": "uint32",
+          "id": 8
+        },
+        "encryptKey": {
+          "type": "bytes",
+          "id": 9
+        },
+        "readTimes": {
+          "type": "uint32",
+          "id": 10
+        },
+        "leftTime": {
+          "type": "uint32",
+          "id": 11
+        },
+        "notOnlineImage": {
+          "type": "NotOnlineImage",
+          "id": 12
+        },
+        "elemFlags2": {
+          "type": "ElemFlags2",
+          "id": 13
+        },
+        "opertype": {
+          "type": "uint32",
+          "id": 14
+        },
+        "fromphonenum": {
+          "type": "string",
+          "id": 15
+        }
+      }
+    },
+    "ShakeWindow": {
+      "edition": "proto2",
+      "fields": {
+        "type": {
+          "type": "uint32",
+          "id": 1
+        },
+        "reserve": {
+          "type": "uint32",
+          "id": 2
+        },
+        "uin": {
+          "type": "uint64",
+          "id": 3
+        }
+      }
+    },
+    "SmallEmoji": {
+      "edition": "proto2",
+      "fields": {
+        "packIdSum": {
+          "type": "uint32",
+          "id": 1
+        },
+        "imageType": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "SourceMsg": {
+      "edition": "proto2",
+      "fields": {
+        "origSeqs": {
+          "rule": "repeated",
+          "type": "uint32",
+          "id": 1
+        },
+        "senderUin": {
+          "type": "uint64",
+          "id": 2
+        },
+        "time": {
+          "type": "uint32",
+          "id": 3
+        },
+        "flag": {
+          "type": "uint32",
+          "id": 4
+        },
+        "elems": {
+          "rule": "repeated",
+          "type": "Elem",
+          "id": 5
+        },
+        "type": {
+          "type": "uint32",
+          "id": 6
+        },
+        "richMsg": {
+          "type": "bytes",
+          "id": 7
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 8
+        },
+        "srcMsg": {
+          "type": "bytes",
+          "id": 9
+        },
+        "toUin": {
+          "type": "uint64",
+          "id": 10
+        },
+        "troopName": {
+          "type": "bytes",
+          "id": 11
+        }
+      }
+    },
+    "Text": {
+      "edition": "proto2",
+      "fields": {
+        "unknown": {
+          "type": "bytes",
+          "id": 1
+        },
+        "link": {
+          "type": "string",
+          "id": 2
+        },
+        "attr_6Buf": {
+          "type": "bytes",
+          "id": 3
+        },
+        "attr_7Buf": {
+          "type": "bytes",
+          "id": 4
+        },
+        "buf": {
+          "type": "bytes",
+          "id": 11
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 12
+        }
+      }
+    },
+    "TipsInfo": {
+      "edition": "proto2",
+      "fields": {
+        "text": {
+          "type": "string",
+          "id": 1
+        }
+      }
+    },
+    "TmpPtt": {
+      "edition": "proto2",
+      "fields": {
+        "fileType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "fileUuid": {
+          "type": "bytes",
+          "id": 2
+        },
+        "fileMd5": {
+          "type": "bytes",
+          "id": 3
+        },
+        "fileName": {
+          "type": "bytes",
+          "id": 4
+        },
+        "fileSize": {
+          "type": "uint32",
+          "id": 5
+        },
+        "pttTimes": {
+          "type": "uint32",
+          "id": 6
+        },
+        "userType": {
+          "type": "uint32",
+          "id": 7
+        },
+        "ptttransFlag": {
+          "type": "uint32",
+          "id": 8
+        },
+        "busiType": {
+          "type": "uint32",
+          "id": 9
+        },
+        "msgId": {
+          "type": "uint64",
+          "id": 10
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 30
+        },
+        "pttEncodeData": {
+          "type": "bytes",
+          "id": 31
+        }
+      }
+    },
+    "Trans211TmpMsg": {
+      "edition": "proto2",
+      "fields": {
+        "msgBody": {
+          "type": "bytes",
+          "id": 1
+        },
+        "c2CCmd": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "TransElem": {
+      "edition": "proto2",
+      "fields": {
+        "elemType": {
+          "type": "uint32",
+          "id": 1
+        },
+        "elemValue": {
+          "type": "bytes",
+          "id": 2
+        }
+      }
+    },
+    "VideoFile": {
+      "edition": "proto2",
+      "fields": {
+        "fileUuid": {
+          "type": "bytes",
+          "id": 1
+        },
+        "fileMd5": {
+          "type": "bytes",
+          "id": 2
+        },
+        "fileName": {
+          "type": "bytes",
+          "id": 3
+        },
+        "fileFormat": {
+          "type": "uint32",
+          "id": 4
+        },
+        "fileTime": {
+          "type": "uint32",
+          "id": 5
+        },
+        "fileSize": {
+          "type": "uint32",
+          "id": 6
+        },
+        "thumbWidth": {
+          "type": "uint32",
+          "id": 7
+        },
+        "thumbHeight": {
+          "type": "uint32",
+          "id": 8
+        },
+        "thumbFileMd5": {
+          "type": "bytes",
+          "id": 9
+        },
+        "source": {
+          "type": "bytes",
+          "id": 10
+        },
+        "thumbFileSize": {
+          "type": "uint32",
+          "id": 11
+        },
+        "busiType": {
+          "type": "uint32",
+          "id": 12
+        },
+        "fromChatType": {
+          "type": "uint32",
+          "id": 13
+        },
+        "toChatType": {
+          "type": "uint32",
+          "id": 14
+        },
+        "supportProgressive": {
+          "type": "bool",
+          "id": 15
+        },
+        "fileWidth": {
+          "type": "uint32",
+          "id": 16
+        },
+        "fileHeight": {
+          "type": "uint32",
+          "id": 17
+        },
+        "subBusiType": {
+          "type": "uint32",
+          "id": 18
+        },
+        "videoAttr": {
+          "type": "uint32",
+          "id": 19
+        },
+        "thumbFileUrls": {
+          "rule": "repeated",
+          "type": "bytes",
+          "id": 20
+        },
+        "videoFileUrls": {
+          "rule": "repeated",
+          "type": "bytes",
+          "id": 21
+        },
+        "thumbDownloadFlag": {
+          "type": "uint32",
+          "id": 22
+        },
+        "videoDownloadFlag": {
+          "type": "uint32",
+          "id": 23
+        },
+        "pbReserve": {
+          "type": "bytes",
+          "id": 24
+        }
+      }
+    },
+    "WorkflowNotifyMsg": {
+      "edition": "proto2",
+      "fields": {
+        "extMsg": {
+          "type": "bytes",
+          "id": 1
+        },
+        "createUin": {
+          "type": "uint64",
+          "id": 2
+        }
+      }
+    }
+  }
+}
