@@ -7,6 +7,82 @@
 // @license      MIT
 // ==/UserScript==
 
+/*
+【已知问题】
+1) Telegram 代理相关配置项未注册/未支持：TG_PROXY_HOST/TG_PROXY_PORT/TG_PROXY_AUTH 等在本插件不存在，仅支持直连 TG_API_HOST。
+2) send() 内部使用 Promise.all + 单个 catch 包装，行为接近 allSettled，但返回的失败归因与“严格 allSettled”不完全一致。
+3) Webhook 使用 GET/HEAD 且配置了 body 时，运行时会忽略 body（fetch 规范限制）；目前仅 console.warn，不会把“忽略原因”写进结果 detail。
+4) 企业微信应用消息(QYWX_AM) 的 touser 分流规则：目前只识别“签到号 N”，未覆盖“账号N”的分支，可能导致接收人选择变窄。
+
+【运行时限制与不支持项】
+- 无 crypto/WebCrypto：不支持钉钉 DD_BOT_SECRET 签名模式；不支持飞书 FSSECRET 签名模式（填写 secret 会跳过并提示）。
+- 所有参数必须通过 SealDice WebUI 配置项设置。
+- AbortController 若不存在：TIMEOUT_MS 仅作为配置保留，不会真正中断请求（会在 console 给出一次性提示）。
+- FormData 若不存在：WEBHOOK_CONTENT_TYPE= multipart/form-data 将判定不支持并跳过该通道。
+- Basic/RFC2047/Base64：使用 btoa + UTF-8 转换实现，理论上支持中文标题/用户名密码。
+
+【配置方法（WebUI）】
+1) 打开插件配置，找到扩展名：notify。
+2) 先开总开关：ENABLE_NOTIFY = true。
+3) 可选：SKIP_TITLES 填入要跳过推送的标题列表（精确匹配）。
+4) 对每个通道：
+   - 打开通道开关 ENABLE_xxx = true
+   - 填写该通道必填字段（token/url/key 等）
+5) 通用网络行为：
+   - TIMEOUT_MS：单次请求超时（不确定支不支持 AbortController 最好别开）
+   - RETRY_TIMES：失败重试次数（默认 0）
+6) 错误回显：
+   - ERROR_TO_CHAT=true 且调用 send() 时传入 ctx/msg，才会把通道失败信息回复到聊天；否则只写 console。
+
+【调用方法】
+- 插件会挂载：globalThis.SealNotify
+- 调用签名：
+  await globalThis.SealNotify.send(title, content, params?, ctx?, msg?)
+  - title: string 通知标题
+  - content: string 通知正文
+  - params: 可选对象（主要给 Bark/iGot 等通道透传 url 等字段）例如 { url: "https://example.com" }
+  - ctx/msg: 可选（用于把错误发回当前会话；需要 ERROR_TO_CHAT=true）
+
+【返回值】
+{
+  title: string,
+  skipped: boolean, // 总开关关闭或标题命中 SKIP_TITLES 时为 true
+  results: [
+    { channel: string, ok: boolean, skipped?: boolean, status?: number, detail?: string }
+  ]
+}
+
+【实例】
+cmd.solve = async (ctx, msg, cmdArgs) => {
+  const title = "测试通知";
+  const content = "这里是正文\\n第二行";
+  const params = { url: "https://example.com" };
+
+  const ret = await globalThis.SealNotify.send(title, content, params, ctx, msg);
+
+  // 可选：把汇总回给用户（注意别泄露任何 token）
+  const okCnt = ret.results.filter(r => r.ok).length;
+  const failCnt = ret.results.filter(r => !r.ok && !r.skipped).length;
+  seal.replyToSender(ctx, msg, `推送完成：成功${okCnt}，失败${failCnt}`);
+  return seal.ext.newCmdExecuteResult(true);
+};
+
+【实例】
+seal.ext.registerTask(ext, "daily", "08:00", async () => {
+  // taskCtx 里没有 msg；不传 ctx/msg 时错误只会写 console
+  await globalThis.SealNotify.send("日报", "内容...", { url: "" });
+}, "notify_daily", "每日通知示例");
+
+【注意事项】
+- 不要在聊天里回显任何 token/secret；ERROR_TO_CHAT 建议默认 false，仅在调试时开启。
+- Webhook 若用 GET/HEAD：请把动态内容写进 WEBHOOK_URL（用 $title/$content 占位符），不要依赖 body。
+- QYWX_AM 格式严格：corpid,corpsecret,touser(|分隔),agentid,类型(0/1/或thumb_media_id)。
+- WxPusher 的 topicIds/uids 用英文分号 ; 分隔，且两者至少填一个。
+- Chronocat 目标字符串支持 user_id=xxx 与 group_id=yyy，多条用英文分号 ; 分隔。
+- Telegram 仅支持直连 TG_API_HOST；如需代理需在外部网络层解决或等待后续补齐代理配置项。
+*/
+
+
 (() => {
     const EXT_NAME = 'notify';
     const EXT_AUTHOR = 'converted';
