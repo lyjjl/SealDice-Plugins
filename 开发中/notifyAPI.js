@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         notify - SealDice plugin
-// @author       converted
+// @name         notifyAPI
+// @author       某人
 // @version      1.0.0
 // @description  Notify channels (fetch-only) for SealDice. Exposes globalThis.SealNotify.send(...)
 // @timestamp    0
