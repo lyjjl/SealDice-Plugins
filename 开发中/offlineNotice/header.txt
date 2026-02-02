@@ -1,0 +1,9 @@
+// ==UserScript==
+// @name         offlineNotice
+// @author       某人
+// @version      1.0.0
+// @description  掉线通知，仅分离部署
+// @timestamp    0
+// @license      MIT
+// @homepageURL  https://github.com/lyjjl
+// ==/UserScript==
