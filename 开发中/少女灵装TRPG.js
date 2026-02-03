@@ -309,7 +309,7 @@ function main() {
 
         if (subCmd === 'se') {
             const expr = cmdArgs.getRestArgsFrom(2);
-            const change = parseInt(seal.format(ctx, `{%${expr}}`)); // 利用 format 计算算式
+            const change = parseInt(seal.format(ctx, `{${expr}}`)); // 利用 format 计算算式
             if (!isNaN(change)) {
                 let [stress] = seal.vars.intGet(ctx, "$g场景压力值");
                 stress += change;
@@ -352,7 +352,7 @@ function main() {
                         seal.replyToSender(ctx, msg, `与 [CQ:at,qq=${targetUid.replace(/\D/g, '')}] 建立了羁绊[${name}] (Lv.0)`);
                     }
                 } else {
-                    seal.replyToSender(ctx, msg, `格式错误: .gsd bon <名字> @对象 或 .gsd bon upgrade <名字>`);
+                    seal.replyToSender(ctx, msg, `格式错误: .gsd bon <名字> @对象 或 .gsd bon upgrade <名字>\n缺失 @对象`);
                 }
             }
             return seal.ext.newCmdExecuteResult(true);
