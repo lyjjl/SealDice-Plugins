@@ -8,6 +8,7 @@ sealdice-js-ext-template
 qr-code.*
 */test/
 */data/
+*/dist/
 *.db
 */郊狼-py后端-海豹插件-QQ/
 
@@ -27,3 +28,4 @@ DGDEV*
 开发中/probeOnebotPort.js
 # ⬆️这玩意有点可刑（）
 开发中/NotifyAPI.js
+开发中/GetQQUpdateInfo/dist/

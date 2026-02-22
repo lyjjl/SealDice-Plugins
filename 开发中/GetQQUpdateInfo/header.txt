@@ -1,0 +1,9 @@
+// ==UserScript==
+// @name         GetQQUpdateInfo(GQUI)
+// @author       某人
+// @version      1.0.0
+// @description  获取相对指定版本的AndroidQQUpdateInfo，每个人拿到的都不一样！命令是 .取QQ更新信息
+// @timestamp    1771696889
+// @license      MIT
+// @homepageURL  https://github.com/lyjjl
+// ==/UserScript==
