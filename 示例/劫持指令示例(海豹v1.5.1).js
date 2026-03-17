@@ -18,14 +18,14 @@
     96 +        OnCommandOverride    func(ctx *MsgContext, msg *Message, cmdArgs *CmdArgs) bool `jsbind:"onCommandOverride" json:"-" yaml:"-"` // 覆盖指令行为
 */
 
-let ext = seal.ext.find("OnCommandOverride示例");
+let ext = seal.ext.find("onCommandOverride示例");
 if (!ext) {
-  ext = seal.ext.new("OnCommandOverride示例", "某人", "1.0.0");
+  ext = seal.ext.new("onCommandOverride示例", "某人", "1.0.0");
   seal.ext.register(ext);
 }
 
 // 通过 OnCommandOverride 拦截指令
-ext.OnCommandOverride = (ctx, msg, cmdArgs) => {
+ext.onCommandOverride = (ctx, msg, cmdArgs) => {
   // 拦截 rc
   if (cmdArgs.Command !== "rc") return false;
 
