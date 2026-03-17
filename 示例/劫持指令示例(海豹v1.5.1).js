@@ -27,7 +27,7 @@ if (!ext) {
 // 通过 OnCommandOverride 拦截指令
 ext.onCommandOverride = (ctx, msg, cmdArgs) => {
   // 拦截 rc
-  if (cmdArgs.Command !== "rc") return false;
+  if (cmdArgs.command !== "rc") return false;
 
   // 自定义逻辑
   seal.replyToSender(ctx, msg, `指令[rc]被覆盖 | 你的传参是[${cmdArgs.getArgN(1)}]`);
